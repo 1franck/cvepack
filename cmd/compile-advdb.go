@@ -10,6 +10,7 @@ import (
 	"github.com/1franck/cvepack/internal/osv"
 	"github.com/1franck/cvepack/internal/sqlite"
 	"log"
+	_ "modernc.org/sqlite"
 	"os"
 	"path/filepath"
 )

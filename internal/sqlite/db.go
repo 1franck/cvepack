@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"log"
 	// Import the SQLite driver
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 func Connect(dbFile string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", dbFile)
+	db, err := sql.Open("sqlite", dbFile)
 	if err != nil {
 		return nil, err
 	}
