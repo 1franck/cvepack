@@ -1,7 +1,6 @@
 package git
 
 import (
-	"errors"
 	"os/exec"
 	"runtime"
 )
@@ -12,21 +11,12 @@ func CommandExists() bool {
 }
 
 func Pull(path string) (string, error) {
-	osName := runtime.GOOS
-
-	if osName == "windows" {
-		return windowsPull(path)
-	}
-
-	if osName == "linux" {
-		return linuxPull(path)
-	}
-
-	return "", errors.New("Unsupported OS")
+	args := buildCmdArgs("git", "pull")
+	return execCommand(path, args...)
 }
 
-func windowsPull(path string) (string, error) {
-	cmd := exec.Command("cmd", "/C", "git", "pull")
+func execCommand(path string, args ...string) (string, error) {
+	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Dir = path
 	out, err := cmd.CombinedOutput()
 
@@ -36,13 +26,10 @@ func windowsPull(path string) (string, error) {
 	return string(out), nil
 }
 
-func linuxPull(path string) (string, error) {
-	cmd := exec.Command("git", "pull")
-	cmd.Dir = path
-	out, err := cmd.CombinedOutput()
-
-	if err != nil {
-		return "", err
+func buildCmdArgs(args ...string) []string {
+	if runtime.GOOS == "windows" {
+		return append([]string{"cmd", "/C"}, args...)
 	}
-	return string(out), nil
+
+	return args
 }
