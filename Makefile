@@ -12,7 +12,7 @@ GO_ENV_WINDOWS_64 = GOARCH=amd64 GOOS=windows
 
 GO_PROD_FLAGS = -ldflags "-s -w"
 
-VERSION = $(shell grep -oE 'VERSION = "[^"]+"' internal/version.go | cut -d'"' -f2)
+VERSION = $(shell grep -oE 'VERSION = "[^"]+"' internal/const.go | cut -d'"' -f2)
 
 RUN_OS_BIN =
 ifeq ($(OS),Windows_NT)
