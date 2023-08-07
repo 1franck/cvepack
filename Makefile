@@ -59,17 +59,25 @@ build-prod:
 	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-linux $(UPLOAD_DB_CMD)
 	$(GO_ENV_WIN_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-win.exe $(UPLOAD_DB_CMD)
 
+build-arm64:
+	GOOS=linux GOARM=7 GOARCH=arm64 go build $(GO_PROD_FLAGS) -o $(MAIN_BIN_PATH)-arm $(MAIN_CMD)
+	GOOS=linux GOARM=7 GOARCH=arm64 go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BIN_PATH)-arm $(DB_COMPILER_CMD)
+	GOOS=linux GOARM=7 GOARCH=arm64 go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-arm $(UPLOAD_DB_CMD)
+
 run: build
 	$(MAIN_BIN_PATH)-$(RUN_OS_BIN)
 
 clean:
 	go clean
+	rm $(MAIN_BIN_PATH)-arm
 	rm $(MAIN_BIN_PATH)-darwin
 	rm $(MAIN_BIN_PATH)-linux
 	rm $(MAIN_BIN_PATH)-win.exe
+	rm $(DB_COMPILER_BIN_PATH)-arm
 	rm $(DB_COMPILER_BIN_PATH)-darwin
 	rm $(DB_COMPILER_BIN_PATH)-linux
 	rm $(DB_COMPILER_BIN_PATH)-win.exe
+	rm $(UPLOAD_DB_BIN_PATH)-arm
 	rm $(UPLOAD_DB_BIN_PATH)-darwin
 	rm $(UPLOAD_DB_BIN_PATH)-linux
 	rm $(UPLOAD_DB_BIN_PATH)-win.exe
