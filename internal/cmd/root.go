@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/1franck/cvepack/internal"
+	"github.com/1franck/cvepack/internal/common"
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -24,6 +25,12 @@ var RootCmd = &cobra.Command{
 				continue
 			}
 			fmt.Printf("  %-10s %s\n", subCmd.Name(), subCmd.Short)
+		}
+
+		if common.FileExists(internal.DATABASE) {
+			fmt.Printf("\nCurrent database %s\n", internal.DATABASE)
+		} else {
+			fmt.Printf("\nNo database found. Please run 'cvepack update' command.\n")
 		}
 	},
 }

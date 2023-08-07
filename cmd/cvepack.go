@@ -8,6 +8,7 @@ import (
 
 func main() {
 	cmd.RootCmd.AddCommand(cmd.VersionCmd)
+	cmd.RootCmd.AddCommand(cmd.UpdateCmd)
 
 	err := cmd.RootCmd.Execute()
 	if err != nil {

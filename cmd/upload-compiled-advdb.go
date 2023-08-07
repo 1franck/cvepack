@@ -2,13 +2,12 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
+	"fmt"
 	"github.com/1franck/cvepack/internal/common"
 	"github.com/1franck/cvepack/internal/common/checksum"
 	"github.com/1franck/cvepack/internal/core"
 	"github.com/1franck/cvepack/internal/git"
-	"github.com/1franck/cvepack/internal/sqlite"
 	"log"
 	"os"
 	"path/filepath"
@@ -32,23 +31,12 @@ func main() {
 	}
 
 	// Check database if ok
-	db, err := sqlite.Connect(*advDbFilePath)
-	defer func(db *sql.DB) {
-		err := db.Close()
-		log.Fatal(err)
-	}(db)
+	log.Println("Checking database...")
+	err := core.IsDatabaseOk(*advDbFilePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error checking database: %s", err)
 	}
-
-	vulCount, err := core.CountVulnerabilities(db)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if vulCount == 0 {
-		log.Fatal("No vulnerabilities found in database, Abort!")
-	}
-	log.Printf("Found %d vulnerabilities in database...\n", vulCount)
+	log.Println("Database ok!")
 
 	// Calculate checksum of advisory database and write it to db.checksum
 	cs, err := checksum.FromFile(*advDbFilePath)
@@ -65,11 +53,11 @@ func main() {
 	}
 
 	// Copy db to repo
-	destinationFile, err := os.Create(filepath.Join(*compiledAdvRepoPath, "advisories.db"))
+	err = common.CopyFile(*advDbFilePath, filepath.Join(*compiledAdvRepoPath, "advisories.db"))
 	if err != nil {
-		log.Fatalf("Error creating destination file: %s", err)
+		fmt.Println("Error copying file:", err)
+		return
 	}
-	defer destinationFile.Close()
 
 	// Stage all modified files
 	result, err := git.StageAllModified(*compiledAdvRepoPath)

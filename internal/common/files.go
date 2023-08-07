@@ -3,6 +3,7 @@ package common
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -20,6 +21,30 @@ func ValidateDirectory(path string) error {
 
 	if fileInfo, err := os.Stat(path); err == nil && !fileInfo.IsDir() {
 		return errors.New(fmt.Sprintf("Path %s is not a directory", path))
+	}
+
+	return nil
+}
+
+func CopyFile(sourcePath, destinationPath string) error {
+	// Open the source file
+	sourceFile, err := os.Open(sourcePath)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	// Create or overwrite the destination file
+	destinationFile, err := os.Create(destinationPath)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	// Copy the contents from the source to the destination
+	_, err = io.Copy(destinationFile, sourceFile)
+	if err != nil {
+		return err
 	}
 
 	return nil
