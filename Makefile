@@ -1,14 +1,21 @@
+#cvepack bin
 MAIN_CMD = ./cmd/cvepack.go
-MAIN_BINARY_NAME = cvepack
-MAIN_BINARY_BIN = ./bin/$(MAIN_BINARY_NAME)
+MAIN_BIN = cvepack
+MAIN_BIN_PATH = ./bin/$(MAIN_BIN)
 
+#compile-advdb bin
 DB_COMPILER_CMD = ./cmd/compile-advdb.go
-DB_COMPILER_BINARY_NAME = compile-advdb
-DB_COMPILER_BINARY_BIN = ./bin/$(DB_COMPILER_BINARY_NAME)
+DB_COMPILER_BIN = compile-advdb
+DB_COMPILER_BIN_PATH = ./bin/$(DB_COMPILER_BIN)
+
+#upload-compiled-advdb bin
+UPLOAD_DB_CMD = ./cmd/upload-compiled-advdb.go
+UPLOAD_DB_BIN = upload-compiled-advdb
+UPLOAD_DB_BIN_PATH = ./bin/$(UPLOAD_DB_BIN)
 
 GO_ENV_DARWIN_64 = GOARCH=amd64 GOOS=darwin
 GO_ENV_LINUX_64 = GOARCH=amd64 GOOS=linux
-GO_ENV_WINDOWS_64 = GOARCH=amd64 GOOS=windows
+GO_ENV_WIN_64 = GOARCH=amd64 GOOS=windows
 
 GO_PROD_FLAGS = -ldflags "-s -w"
 
@@ -16,7 +23,7 @@ VERSION = $(shell grep -oE 'VERSION = "[^"]+"' internal/const.go | cut -d'"' -f2
 
 RUN_OS_BIN =
 ifeq ($(OS),Windows_NT)
-	RUN_OS_BIN := windows.exe
+	RUN_OS_BIN := win.exe
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
@@ -28,34 +35,44 @@ else
 endif
 
 .DEFAULT_GOAL := run
+.PHONY: clean version
 
 build:
-	$(GO_ENV_DARWIN_64) go build -o $(MAIN_BINARY_BIN)-darwin $(MAIN_CMD)
-	$(GO_ENV_LINUX_64) go build -o $(MAIN_BINARY_BIN)-linux $(MAIN_CMD)
-	$(GO_ENV_WINDOWS_64) go build -o $(MAIN_BINARY_BIN)-windows.exe $(MAIN_CMD)
-	$(GO_ENV_DARWIN_64) go build -o $(DB_COMPILER_BINARY_BIN)-darwin $(DB_COMPILER_CMD)
-	$(GO_ENV_LINUX_64) go build -o $(DB_COMPILER_BINARY_BIN)-linux $(DB_COMPILER_CMD)
-	$(GO_ENV_WINDOWS_64) go build -o $(DB_COMPILER_BINARY_BIN)-windows.exe $(DB_COMPILER_CMD)
+	$(GO_ENV_DARWIN_64) go build -o $(MAIN_BIN_PATH)-darwin $(MAIN_CMD)
+	$(GO_ENV_LINUX_64) go build -o $(MAIN_BIN_PATH)-linux $(MAIN_CMD)
+	$(GO_ENV_WIN_64) go build -o $(MAIN_BIN_PATH)-win.exe $(MAIN_CMD)
+	$(GO_ENV_DARWIN_64) go build -o $(DB_COMPILER_BIN_PATH)-darwin $(DB_COMPILER_CMD)
+	$(GO_ENV_LINUX_64) go build -o $(DB_COMPILER_BIN_PATH)-linux $(DB_COMPILER_CMD)
+	$(GO_ENV_WIN_64) go build -o $(DB_COMPILER_BIN_PATH)-win.exe $(DB_COMPILER_CMD)
+	$(GO_ENV_DARWIN_64) go build -o $(UPLOAD_DB_BIN_PATH)-darwin $(UPLOAD_DB_CMD)
+	$(GO_ENV_LINUX_64) go build -o $(UPLOAD_DB_BIN_PATH)-linux $(UPLOAD_DB_CMD)
+	$(GO_ENV_WIN_64) go build -o $(UPLOAD_DB_BIN_PATH)-win.exe $(UPLOAD_DB_CMD)
 
 build-prod:
-	$(GO_ENV_DARWIN_64) go build $(GO_PROD_FLAGS) -o $(MAIN_BINARY_BIN)-darwin $(MAIN_CMD)
-	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(MAIN_BINARY_BIN)-linux $(MAIN_CMD)
-	$(GO_ENV_WINDOWS_64) go build $(GO_PROD_FLAGS) -o $(MAIN_BINARY_BIN)-windows.exe $(MAIN_CMD)
-	$(GO_ENV_DARWIN_64) go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BINARY_BIN)-darwin $(DB_COMPILER_CMD)
-	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BINARY_BIN)-linux $(DB_COMPILER_CMD)
-	$(GO_ENV_WINDOWS_64) go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BINARY_BIN)-windows.exe $(DB_COMPILER_CMD)
+	$(GO_ENV_DARWIN_64) go build $(GO_PROD_FLAGS) -o $(MAIN_BIN_PATH)-darwin $(MAIN_CMD)
+	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(MAIN_BIN_PATH)-linux $(MAIN_CMD)
+	$(GO_ENV_WIN_64) go build $(GO_PROD_FLAGS) -o $(MAIN_BIN_PATH)-win.exe $(MAIN_CMD)
+	$(GO_ENV_DARWIN_64) go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BIN_PATH)-darwin $(DB_COMPILER_CMD)
+	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BIN_PATH)-linux $(DB_COMPILER_CMD)
+	$(GO_ENV_WIN_64) go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BIN_PATH)-win.exe $(DB_COMPILER_CMD)
+	$(GO_ENV_DARWIN_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-darwin $(UPLOAD_DB_CMD)
+	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-linux $(UPLOAD_DB_CMD)
+	$(GO_ENV_WIN_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-win.exe $(UPLOAD_DB_CMD)
 
 run: build
-	$(MAIN_BINARY_BIN)-$(RUN_OS_BIN)
+	$(MAIN_BIN_PATH)-$(RUN_OS_BIN)
 
 clean:
 	go clean
-	rm $(MAIN_BINARY_BIN)-darwin
-	rm $(MAIN_BINARY_BIN)-linux
-	rm $(MAIN_BINARY_BIN)-windows.exe
-	rm $(DB_COMPILER_BINARY_BIN)-darwin
-	rm $(DB_COMPILER_BINARY_BIN)-linux
-	rm $(DB_COMPILER_BINARY_BIN)-windows.exe
+	rm $(MAIN_BIN_PATH)-darwin
+	rm $(MAIN_BIN_PATH)-linux
+	rm $(MAIN_BIN_PATH)-win.exe
+	rm $(DB_COMPILER_BIN_PATH)-darwin
+	rm $(DB_COMPILER_BIN_PATH)-linux
+	rm $(DB_COMPILER_BIN_PATH)-win.exe
+	rm $(UPLOAD_DB_BIN_PATH)-darwin
+	rm $(UPLOAD_DB_BIN_PATH)-linux
+	rm $(UPLOAD_DB_BIN_PATH)-win.exe
 
 version:
 	@echo $(VERSION)
