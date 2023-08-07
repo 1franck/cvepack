@@ -6,6 +6,10 @@ var insertVulnerabilityQuery = `
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
 `
 
+var countVulnerabilityQuery = `
+    SELECT COUNT(*) FROM vulnerabilities
+`
+
 var insertAffectedQuery = `
     INSERT INTO affected
     (vulnerability_id, package_ecosystem, package_name, package_purl, severity, versions, ecosystem_specific, database_specific)

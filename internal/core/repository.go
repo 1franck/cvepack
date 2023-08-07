@@ -7,6 +7,16 @@ import (
 	"log"
 )
 
+func CountVulnerabilities(db *sql.DB) (int, error) {
+	var count int
+	err := db.QueryRow(countVulnerabilityQuery).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func SearchPackage(db *sql.DB, ecosystem string, packageName string) ([]interface{}, error) {
 	stmt, err := db.Prepare(searchAffectedPackageQuery)
 	if err != nil {
