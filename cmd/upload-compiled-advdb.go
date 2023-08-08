@@ -8,6 +8,7 @@ import (
 	"github.com/1franck/cvepack/internal/common/checksum"
 	"github.com/1franck/cvepack/internal/core"
 	"github.com/1franck/cvepack/internal/git"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -43,9 +44,26 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	log.Printf("Checksum of %s: %s\n", *advDbFilePath, cs)
 
+	// Read old checksum and compare it with the new one
+	oldChecksumFile, err := os.Open(filepath.Join(*compiledAdvRepoPath, "db.checksum"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer oldChecksumFile.Close()
+
+	oldChecksum, err := io.ReadAll(oldChecksumFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if string(oldChecksum) == cs {
+		log.Println("Checksums are equal, no need to update")
+		return
+	}
+
+	// Write the new checksum to db.checksum
 	checksumFile := filepath.Join(*compiledAdvRepoPath, "db.checksum")
 	err = os.WriteFile(checksumFile, []byte(cs), 0644)
 	if err != nil {
