@@ -24,11 +24,11 @@ func Test_Update_IsNeeded_HappyPath(t *testing.T) {
 	http.ListenAndServe("", nil)
 
 	conf := config.FromDefault(testConfig)
-	var isNeeded, reason = update.IsNeeded(conf)
+	var updateNeeded, reason = update.IsNeeded(conf)
 	var expectedReason = "Database is up to date"
 
-	if !isNeeded {
-		t.Errorf("Should not need update: %s", reason)
+	if updateNeeded {
+		t.Errorf("Should not need update: got '%s'", reason)
 	}
 
 	if reason != expectedReason {
