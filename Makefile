@@ -86,4 +86,4 @@ version:
 	@echo $(VERSION)
 
 tests:
-	go test -v ./tests/update
+	go test -v ./tests/...
