@@ -2,20 +2,21 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/1franck/cvepack/internal"
 	"github.com/1franck/cvepack/internal/common"
+	"github.com/1franck/cvepack/internal/config"
+	"github.com/1franck/cvepack/internal/update"
 	"github.com/spf13/cobra"
 	"strings"
 )
 
 var rooCmdLongDescSlice = []string{
-	fmt.Sprintf("%s is a tool to detect CVEs in packages.", internal.NAME),
+	fmt.Sprintf("%s is a tool to detect CVEs in packages.", config.Default.Name),
 	"It use GitHub Advisory Database to search for CVEs.",
 }
 
 var RootCmd = &cobra.Command{
-	Use:   strings.ToLower(internal.NAME_VERSION),
-	Short: fmt.Sprintf("%s is a tool to detect CVEs in packages", internal.NAME),
+	Use:   strings.ToLower(config.Default.NameAndVersion()),
+	Short: fmt.Sprintf("%s is a tool to detect CVEs in packages", config.Default.Name),
 	Long:  strings.Join(rooCmdLongDescSlice, " "),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(rootCmdCliHeader())
@@ -27,11 +28,15 @@ var RootCmd = &cobra.Command{
 			fmt.Printf("  %-10s %s\n", subCmd.Name(), subCmd.Short)
 		}
 
-		if common.FileExists(internal.DATABASE) {
-			fmt.Printf("\nCurrent database %s\n", internal.DATABASE)
+		if common.FileExists(config.Default.DatabaseFilePath()) {
+			fmt.Printf("\nCurrent database %s\n", config.Default.DatabaseFilePath())
+			if update.IsNeeded(config.Default) {
+				fmt.Printf("\nA new database is available. Please run 'cvepack update' command.\n")
+			}
 		} else {
 			fmt.Printf("\nNo database found. Please run 'cvepack update' command.\n")
 		}
+
 	},
 }
 

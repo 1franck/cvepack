@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/1franck/cvepack/internal"
+	"github.com/1franck/cvepack/internal/config"
 	"github.com/1franck/cvepack/internal/core"
 	"github.com/1franck/cvepack/internal/update"
 	"github.com/spf13/cobra"
@@ -16,7 +16,7 @@ var UpdateCmd = &cobra.Command{
 		fmt.Println("Updating CVE database ...")
 		update.UpdateDatabase("./")
 		fmt.Println("Checking ...")
-		err := core.IsDatabaseOk(internal.DATABASE)
+		err := core.IsDatabaseOk(config.Default.DatabaseFilePath())
 		if err != nil {
 			_ = fmt.Errorf("error checking database: %s", err)
 		}

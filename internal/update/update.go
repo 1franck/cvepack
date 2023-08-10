@@ -2,8 +2,10 @@ package update
 
 import (
 	"archive/zip"
+	"bufio"
 	"fmt"
-	"github.com/1franck/cvepack/internal"
+	"github.com/1franck/cvepack/internal/common"
+	"github.com/1franck/cvepack/internal/config"
 	"io"
 	"net/http"
 	"os"
@@ -19,7 +21,7 @@ func UpdateDatabase(outputDir string) {
 	}
 
 	// Download the ZIP file
-	resp, err := http.Get(internal.DATABASE_URL)
+	resp, err := http.Get(config.Default.DatabaseUrl)
 	if err != nil {
 		fmt.Println("Error downloading ZIP file:", err)
 		return
@@ -84,4 +86,41 @@ func UpdateDatabase(outputDir string) {
 			}
 		}
 	}
+}
+
+func IsNeeded(config config.Config) bool {
+	if !common.DirectoryExists(config.DatabaseRootDir) ||
+		!common.FileExists(config.DatabaseFilePath()) ||
+		!common.FileExists(config.DatabaseChecksumFilePath()) {
+		return true
+	}
+
+	resp, err := http.Get(config.DatabaseChecksumUrl)
+	if err != nil {
+		fmt.Println("Error checking server database checksum:", err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	dbChecksum := ""
+	scanner := bufio.NewScanner(resp.Body)
+	if scanner.Scan() {
+		dbChecksum = scanner.Text()
+	}
+
+	localChecksum := ""
+	localChecksumBytes, err := common.ReadAllFile(config.DatabaseChecksumFilePath())
+	if err != nil {
+		fmt.Println("Error reading local database checksum:", err)
+		return false
+	}
+	localChecksum = string(localChecksumBytes)
+
+	if dbChecksum != localChecksum {
+		fmt.Println("Database checksum mismatch")
+		fmt.Printf("Server checksum: %s\nLocal checksum: %s\n", dbChecksum, localChecksum)
+		return true
+	}
+
+	return false
 }
