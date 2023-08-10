@@ -127,8 +127,6 @@ func IsNeeded(config config.Config) (bool, internal.ErrorMsg) {
 	localChecksum = string(localChecksumBytes)
 
 	if dbChecksum != localChecksum {
-		fmt.Println("Database checksum mismatch")
-		fmt.Printf("Server checksum: %s\nLocal checksum: %s\n", dbChecksum, localChecksum)
 		return true, ErrorDatabaseChecksumMismatch
 	}
 
