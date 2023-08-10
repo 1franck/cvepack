@@ -22,6 +22,31 @@ type Config struct {
 	DatabaseChecksumUrl      string
 }
 
+func FromDefault(config Config) Config {
+	if config.Name == "" {
+		config.Name = Default.Name
+	}
+	if config.Version == "" {
+		config.Version = Default.Version
+	}
+	if config.DatabaseRootDir == "" {
+		config.DatabaseRootDir = Default.DatabaseRootDir
+	}
+	if config.DatabaseFileName == "" {
+		config.DatabaseFileName = Default.DatabaseFileName
+	}
+	if config.DatabaseChecksumFileName == "" {
+		config.DatabaseChecksumFileName = Default.DatabaseChecksumFileName
+	}
+	if config.DatabaseUrl == "" {
+		config.DatabaseUrl = Default.DatabaseUrl
+	}
+	if config.DatabaseChecksumUrl == "" {
+		config.DatabaseChecksumUrl = Default.DatabaseChecksumUrl
+	}
+	return config
+}
+
 func (config *Config) DatabaseFilePath() string {
 	return filepath.Join(config.DatabaseRootDir, config.DatabaseFileName)
 }
