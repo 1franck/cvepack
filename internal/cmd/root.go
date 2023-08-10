@@ -29,9 +29,11 @@ var RootCmd = &cobra.Command{
 		}
 
 		if common.FileExists(config.Default.DatabaseFilePath()) {
-			fmt.Printf("\nCurrent database %s\n", config.Default.DatabaseFilePath())
-			if update.IsNeeded(config.Default) {
+			fmt.Printf("\nCurrent database: %s\n", config.Default.DatabaseFilePath())
+			if needUpdate, _ := update.IsNeeded(config.Default); needUpdate {
 				fmt.Printf("\nA new database is available. Please run 'cvepack update' command.\n")
+			} else {
+				fmt.Printf("Database is up to date.\n")
 			}
 		} else {
 			fmt.Printf("\nNo database found. Please run 'cvepack update' command.\n")
