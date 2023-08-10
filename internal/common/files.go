@@ -14,6 +14,13 @@ func FileExists(path string) bool {
 	return false
 }
 
+func DirectoryExists(path string) bool {
+	if fileInfo, err := os.Stat(path); err == nil && fileInfo.IsDir() {
+		return true
+	}
+	return false
+}
+
 func ValidateDirectory(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return errors.New(fmt.Sprintf("Path %s does not exist", path))
@@ -48,4 +55,18 @@ func CopyFile(sourcePath, destinationPath string) error {
 	}
 
 	return nil
+}
+
+func ReadAllFile(filePath string) ([]byte, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
