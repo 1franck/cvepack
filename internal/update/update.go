@@ -4,12 +4,22 @@ import (
 	"archive/zip"
 	"bufio"
 	"fmt"
+	"github.com/1franck/cvepack/internal"
 	"github.com/1franck/cvepack/internal/common"
 	"github.com/1franck/cvepack/internal/config"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+)
+
+const (
+	ErrorDatabaseFolderNotFound            internal.ErrorMsg = "database folder not found"
+	ErrorDatabaseFileNotFound              internal.ErrorMsg = "database file not found"
+	ErrorDatabaseChecksumFileNotFound      internal.ErrorMsg = "database checksum file not found"
+	ErrorDatabaseServerChecksumFileInvalid internal.ErrorMsg = "error checking server database checksum: %s"
+	ErrorDatabaseReadingLocalChecksum      internal.ErrorMsg = "error reading local database checksum: %s"
+	ErrorDatabaseChecksumMismatch          internal.ErrorMsg = "databases checksums mismatch"
 )
 
 func UpdateDatabase(outputDir string) {
@@ -88,18 +98,18 @@ func UpdateDatabase(outputDir string) {
 	}
 }
 
-func IsNeeded(config config.Config) (bool, string) {
+func IsNeeded(config config.Config) (bool, internal.ErrorMsg) {
 	if !common.DirectoryExists(config.DatabaseRootDir) {
-		return true, "Database folder not found"
+		return true, ErrorDatabaseFolderNotFound
 	} else if !common.FileExists(config.DatabaseFilePath()) {
-		return true, "Database file not found"
+		return true, ErrorDatabaseFileNotFound
 	} else if !common.FileExists(config.DatabaseChecksumFilePath()) {
-		return true, "Database checksum file not found"
+		return true, ErrorDatabaseChecksumFileNotFound
 	}
 
 	resp, err := http.Get(config.DatabaseChecksumUrl)
 	if err != nil {
-		return false, fmt.Sprintf("Error checking server database checksum: %s", err)
+		return false, ErrorDatabaseServerChecksumFileInvalid.Sprintf(err)
 	}
 	defer resp.Body.Close()
 
@@ -112,15 +122,15 @@ func IsNeeded(config config.Config) (bool, string) {
 	localChecksum := ""
 	localChecksumBytes, err := common.ReadAllFile(config.DatabaseChecksumFilePath())
 	if err != nil {
-		return false, fmt.Sprintf("Error reading local database checksum: %s", err)
+		return false, ErrorDatabaseReadingLocalChecksum.Sprintf(err)
 	}
 	localChecksum = string(localChecksumBytes)
 
 	if dbChecksum != localChecksum {
 		fmt.Println("Database checksum mismatch")
 		fmt.Printf("Server checksum: %s\nLocal checksum: %s\n", dbChecksum, localChecksum)
-		return true, "Database checksum mismatch"
+		return true, ErrorDatabaseChecksumMismatch
 	}
 
-	return false, "Database is up to date"
+	return false, internal.EmptyError
 }
