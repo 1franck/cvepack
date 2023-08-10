@@ -35,7 +35,7 @@ else
 endif
 
 .DEFAULT_GOAL := run
-.PHONY: clean version
+.PHONY: clean version tests
 
 build:
 	$(GO_ENV_DARWIN_64) go build -o $(MAIN_BIN_PATH)-darwin $(MAIN_CMD)
@@ -84,3 +84,6 @@ clean:
 
 version:
 	@echo $(VERSION)
+
+tests:
+	go test -v ./tests/update
