@@ -88,17 +88,18 @@ func UpdateDatabase(outputDir string) {
 	}
 }
 
-func IsNeeded(config config.Config) bool {
-	if !common.DirectoryExists(config.DatabaseRootDir) ||
-		!common.FileExists(config.DatabaseFilePath()) ||
-		!common.FileExists(config.DatabaseChecksumFilePath()) {
-		return true
+func IsNeeded(config config.Config) (bool, string) {
+	if !common.DirectoryExists(config.DatabaseRootDir) {
+		return true, "Database folder not found"
+	} else if !common.FileExists(config.DatabaseFilePath()) {
+		return true, "Database file not found"
+	} else if !common.FileExists(config.DatabaseChecksumFilePath()) {
+		return true, "Database checksum file not found"
 	}
 
 	resp, err := http.Get(config.DatabaseChecksumUrl)
 	if err != nil {
-		fmt.Println("Error checking server database checksum:", err)
-		return false
+		return false, fmt.Sprintf("Error checking server database checksum: %s", err)
 	}
 	defer resp.Body.Close()
 
@@ -111,16 +112,15 @@ func IsNeeded(config config.Config) bool {
 	localChecksum := ""
 	localChecksumBytes, err := common.ReadAllFile(config.DatabaseChecksumFilePath())
 	if err != nil {
-		fmt.Println("Error reading local database checksum:", err)
-		return false
+		return false, fmt.Sprintf("Error reading local database checksum: %s", err)
 	}
 	localChecksum = string(localChecksumBytes)
 
 	if dbChecksum != localChecksum {
 		fmt.Println("Database checksum mismatch")
 		fmt.Printf("Server checksum: %s\nLocal checksum: %s\n", dbChecksum, localChecksum)
-		return true
+		return true, "Database checksum mismatch"
 	}
 
-	return false
+	return false, "Database is up to date"
 }
