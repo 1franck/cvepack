@@ -11,3 +11,17 @@ Be aware, this is a proof of concept and a work in progress.
 - [x] NPM
 - [ ] Go
 - [ ] NuGet
+
+## Usage
+
+#### Scan a folder
+
+```bash
+$ cvepack scan <folder path>
+```
+
+#### Update CVE database
+
+```bash
+$ cvepack update
+```
