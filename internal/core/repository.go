@@ -17,26 +17,6 @@ func CountVulnerabilities(db *sql.DB) (int, error) {
 	return count, nil
 }
 
-func SearchPackage(db *sql.DB, ecosystem string, packageName string) ([]interface{}, error) {
-	stmt, err := db.Prepare(searchAffectedPackageQuery)
-	if err != nil {
-		log.Printf("error while preparing query: %s", err)
-		return nil, err
-	}
-	result, err := stmt.Query(ecosystem, packageName)
-	if err != nil {
-		log.Printf("error while query db!")
-		return nil, err
-	}
-	var rows []interface{}
-	err = result.Scan(&rows)
-	if err != nil {
-		log.Printf("error while scanning results!")
-		return nil, err
-	}
-	return rows, nil
-}
-
 func InsertVulnerability(db *sql.DB, v osv.Osv) error {
 
 	tx, err := db.Begin()

@@ -4,7 +4,7 @@ import "path/filepath"
 
 var Default = Config{
 	Name:                     "CVEPack",
-	Version:                  "0.0.1",
+	Version:                  "0.0.2",
 	DatabaseRootDir:          "./cvepack-database-main",
 	DatabaseFileName:         "advisories.db",
 	DatabaseChecksumFileName: "db.checksum",

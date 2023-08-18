@@ -9,6 +9,7 @@ import (
 func main() {
 	cmd.RootCmd.AddCommand(cmd.VersionCmd)
 	cmd.RootCmd.AddCommand(cmd.UpdateCmd)
+	cmd.RootCmd.AddCommand(cmd.ScanCommand)
 
 	err := cmd.RootCmd.Execute()
 	if err != nil {
