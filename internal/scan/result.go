@@ -31,3 +31,11 @@ func (result *Results) Append(pkg ecosystem.Package, vul search.PackageVulnerabi
 		Vulnerabilities: vul,
 	})
 }
+
+func (result *Results) UniqueResultCount() int {
+	unique := make(map[string]bool)
+	for _, value := range *result {
+		unique[value.Query.ToString()] = true
+	}
+	return len(unique)
+}

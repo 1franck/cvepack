@@ -61,7 +61,7 @@ var ScanCommand = &cobra.Command{
 			}
 
 			problemsWord := "problem"
-			packageAffectedCount := len(pkgsVul)
+			packageAffectedCount := pkgsVul.UniqueResultCount()
 			if packageAffectedCount == 0 {
 				fmt.Printf("no %s found\n", problemsWord)
 				continue
@@ -73,16 +73,20 @@ var ScanCommand = &cobra.Command{
 
 			fmt.Printf("%d %s found:\n", packageAffectedCount, problemsWord)
 
-			longuestPackageName := pkgsVul.LongestPackageName() + 5
+			printedDep := make(map[string]bool)
+			longestPackageName := pkgsVul.LongestPackageName() + 5
 			for _, result := range pkgsVul {
-				fmt.Printf(" [%s %s] %s %s %s %s\n",
-					packageColor.Sprint(result.Query.Name),
-					versionColor.Sprintf(result.Query.Version),
-					strings.Repeat(".", longuestPackageName-result.Query.StringLen()),
-					colorizeSeveritySummary(result.Vulnerabilities),
-					//"99 critical, 99 high, 99 moderate",
-					strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
-					infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
+				if _, ok := printedDep[result.Query.Name]; !ok {
+					fmt.Printf(" [%s %s] %s %s %s %s %s\n",
+						packageColor.Sprint(result.Query.Name),
+						versionColor.Sprintf(result.Query.Version),
+						strings.Repeat(".", longestPackageName-result.Query.StringLen()),
+						colorizeSeveritySummary(result.Vulnerabilities),
+						strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
+						infoColor.Sprint(result.Vulnerabilities.AliasesSummary()),
+						result.Query.Parent)
+					printedDep[result.Query.Name] = true
+				}
 			}
 
 		}
