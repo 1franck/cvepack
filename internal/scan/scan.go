@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/1franck/cvepack/internal/ecosystem"
 	"github.com/1franck/cvepack/internal/ecosystem/npm"
-	"path/filepath"
+	"sync"
 )
 
 type Scan struct {
@@ -18,15 +18,18 @@ func NewScan(path string) *Scan {
 }
 
 func (scan *Scan) Run() {
+	waitGroup := sync.WaitGroup{}
 	if npm.DetectPackageJson(scan.Path) {
 		if npm.DetectPackageLockJson(scan.Path) {
 			scan.Log("package-lock.json detected ...")
-			scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromPackageLockJson(scan.Path))
-		} else if npm.DetectNodeModules(scan.Path) {
-			scan.Log("/node_modules detected ...")
-			scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromNodeModules(filepath.Join(scan.Path, "node_modules")))
+			waitGroup.Add(1)
+			go func() {
+				scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromPackageLockJson(scan.Path))
+				waitGroup.Done()
+			}()
 		}
 	}
+	waitGroup.Wait()
 }
 
 func (scan *Scan) Log(msg string) {

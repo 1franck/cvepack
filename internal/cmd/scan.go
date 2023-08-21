@@ -18,15 +18,16 @@ var ScanCommand = &cobra.Command{
 	Short: "Scan a folder",
 	Long:  "Scan a folder",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("scanning %s\n", args[0])
+		fmt.Println(config.Default.NameAndVersion())
+		fmt.Printf("scanning %s\n ...", args[0])
 		if err := common.ValidateDirectory(args[0]); err != nil {
 			fmt.Printf("path %s not found\n", args[0])
 			return
 		}
 
-		scan := scan.NewScan(args[0])
-		scan.Verbose = true
-		scan.Run()
+		scanJob := scan.NewScan(args[0])
+		scanJob.Verbose = true
+		scanJob.Run()
 
 		db, err := sqlite.Connect(config.Default.DatabaseFilePath())
 		defer func(db *sql.DB) {
@@ -43,9 +44,9 @@ var ScanCommand = &cobra.Command{
 
 		pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
-		for _, ecosystem := range scan.Ecosystems {
+		for _, ecosystem := range scanJob.Ecosystems {
 			fmt.Printf("[%s] %d package(s) analyzed, ", ecosystem.Name(), len(ecosystem.Packages()))
-			pkgsVul := make(ecosytemVulnerabilities)
+			pkgsVul := scan.Results{}
 			for _, pkg := range ecosystem.Packages() {
 				vulnerabilities, err := pkgVulQuerier.Query(ecosystem.Name(), pkg.Name(), pkg.Version())
 				if err != nil {
@@ -56,41 +57,53 @@ var ScanCommand = &cobra.Command{
 					continue
 				}
 
-				pkgsVul[pkg.Name()] = vulnerabilities
+				pkgsVul.Append(pkg, vulnerabilities)
 			}
 
-			if len(pkgsVul) > 0 {
-				if len(pkgsVul) == 1 {
-					fmt.Printf("%d problem found:\n", len(pkgsVul))
-				} else {
-					fmt.Printf("%d problems found:\n", len(pkgsVul))
-				}
-			} else {
-				fmt.Printf("no problem found\n")
+			problemsWord := "problem"
+			packageAffectedCount := len(pkgsVul)
+			if packageAffectedCount == 0 {
+				fmt.Printf("no %s found\n", problemsWord)
+				continue
 			}
 
-			longuestPackageName := pkgsVul.LongestPackageName() + 10
-			for pkgName, vulnerabilities := range pkgsVul {
-				fmt.Printf(" ├ %s %s %s %s %s\n",
-					pkgName,
-					strings.Repeat(".", longuestPackageName-len(pkgName)),
-					vulnerabilities.SeveritiesSummary(),
-					strings.Repeat(".", 30-len(vulnerabilities.SeveritiesSummary())),
-					vulnerabilities.AliasesSummary())
+			if packageAffectedCount > 1 {
+				problemsWord += "s"
+			}
+
+			fmt.Printf("%d %s found:\n", packageAffectedCount, problemsWord)
+
+			longuestPackageName := pkgsVul.LongestPackageName() + 5
+			for _, result := range pkgsVul {
+				fmt.Printf(" [%s %s] %s %s %s %s\n",
+					packageColor.Sprint(result.Query.Name),
+					versionColor.Sprintf(result.Query.Version),
+					strings.Repeat(".", longuestPackageName-result.Query.StringLen()),
+					colorizeSeveritySummary(result.Vulnerabilities),
+					//"99 critical, 99 high, 99 moderate",
+					strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
+					infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
 			}
 
 		}
 	},
 }
 
-type ecosytemVulnerabilities map[string]search.PackageVulnerabilities
-
-func (e ecosytemVulnerabilities) LongestPackageName() int {
-	var longest int
-	for k := range e {
-		if len(k) > longest {
-			longest = len(k)
+func colorizeSeveritySummary(vul search.PackageVulnerabilities) string {
+	var severitySummary []string
+	for level, count := range vul.SeveritiesSummaryMap() {
+		level = strings.ToLower(level)
+		switch level {
+		case "critical":
+			severitySummary = append(severitySummary, severityCriticalLeverColor.Sprintf("%d %s", count, level))
+			break
+		case "high":
+			severitySummary = append(severitySummary, severityHighLeverColor.Sprintf("%d %s", count, level))
+			break
+		default:
+			severitySummary = append(severitySummary, severityModerateLeverColor.Sprintf("%d %s", count, level))
+			break
 		}
 	}
-	return longest
+	return strings.Join(severitySummary, ", ")
 }

@@ -5,45 +5,43 @@ import (
 	"path/filepath"
 )
 
-func NewProjectFromPackageJson(path string) *Project {
-	npm := &Project{_path: path}
-	packages, err := fileToPackageJson(filepath.Join(path, "package.json"))
-	if err == nil {
-		for p, ver := range packages.Dependencies {
-			npm._packages = append(npm._packages, NewPackage(p, ver))
-		}
-	}
-	if err != nil {
-		log.Println(filepath.Join(path, "package.json"))
-		log.Println(err)
-	}
-	return npm
-}
-
-func NewProjectFromNodeModules(path string) *Project {
-	npm := &Project{_path: path}
-	packages := ScanNodeModules(path)
-	for _, pkg := range packages {
-		npm._packages = append(npm._packages, pkg)
-	}
-	return npm
-}
-
 func NewProjectFromPackageLockJson(path string) *Project {
 	npm := &Project{_path: path}
 	pkgLock, err := fileToPackageLockJson(filepath.Join(path, "package-lock.json"))
+
 	if err == nil {
-		for p, pkg := range pkgLock.Packages {
-			if p == "" {
+		for pkgKey, pkg := range pkgLock.Packages {
+			if pkgKey == "" {
+				// reference to the package itself or an installed node_modules package, skip
 				continue
+			} else if pkg.Name != "" && pkg.Name != pkgKey {
+				// reference to a local package
+				pkgKey = pkg.Name
 			}
-			p = p[13:]
-			npm._packages = append(npm._packages, NewPackage(p, pkg.Version))
+			npm._packages = append(npm._packages, NewPackage(pkgKey, pkg.Version))
 		}
-	}
-	if err != nil {
+	} else {
 		log.Println(filepath.Join(path, "package-lock.json"))
 		log.Println(err)
 	}
+
 	return npm
+}
+
+func findParents(
+	parents map[string][]string,
+	pkgLock map[string]packageLockPackage,
+	pkgName string, pkgVersion string) map[string][]string {
+	for key, pkgDef := range pkgLock {
+		for depName, depVersion := range pkgDef.Dependencies {
+			if depName == pkgName && depVersion == pkgVersion {
+				if _, ok := parents[key]; !ok {
+					parents[key] = []string{}
+				}
+				parents[key] = append(parents[key], pkgName)
+
+			}
+		}
+	}
+	return parents
 }

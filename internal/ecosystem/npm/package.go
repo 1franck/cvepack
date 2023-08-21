@@ -1,61 +1,52 @@
 package npm
 
 import (
-	"encoding/json"
-	"github.com/1franck/cvepack/internal/common"
+	"strings"
 )
 
-type PackageJson struct {
-	Name            string            `json:"name"`
-	Version         string            `json:"version"`
-	Dependencies    map[string]string `json:"dependencies"`
-	DevDependencies map[string]string `json:"devDependencies"`
+type npmPackage struct {
+	rawName string
+	name    string
+	version string
+	parent  string
 }
 
-type PackageLockJson struct {
-	Name            string                         `json:"name"`
-	Version         string                         `json:"version"`
-	LockfileVersion int                            `json:"lockfileVersion"`
-	Requires        bool                           `json:"requires"`
-	Packages        map[string]packageLockPackages `json:"packages"`
+func NewPackage(name string, version string) *npmPackage {
+	finalName := resolvePackageName(name)
+	parent := resolvePackageParentName(name)
+	return &npmPackage{name, finalName, version, parent}
 }
 
-type packageLockPackages struct {
-	Version string `json:"version"`
+func resolvePackageName(name string) string {
+	if strings.HasPrefix(name, "node_modules/") {
+		name = strings.TrimPrefix(name, "node_modules/")
+	}
+	if strings.Contains(name, "/node_modules/") {
+		parts := strings.Split(name, "/node_modules/")
+		return parts[len(parts)-1]
+	}
+	return name
 }
 
-func fileToPackageJson(filePath string) (*PackageJson, error) {
-	content, err := common.ReadAllFile(filePath)
-	if err != nil {
-		return nil, err
+func resolvePackageParentName(name string) string {
+	if strings.HasPrefix(name, "node_modules/") {
+		name = strings.TrimPrefix(name, "node_modules/")
 	}
-
-	var pkg PackageJson
-	if err := json.Unmarshal(content, &pkg); err != nil {
-		return nil, err
+	if strings.Contains(name, "/node_modules/") {
+		parts := strings.Split(name, "/node_modules/")
+		return parts[len(parts)-2]
 	}
-
-	return &pkg, nil
+	return ""
 }
 
-func fileToPackageLockJson(filePath string) (*PackageLockJson, error) {
-	content, err := common.ReadAllFile(filePath)
-	if err != nil {
-		return nil, err
-	}
-
-	var pkgLock PackageLockJson
-	if err := json.Unmarshal(content, &pkgLock); err != nil {
-		return nil, err
-	}
-
-	return &pkgLock, nil
+func (pkg *npmPackage) Name() string {
+	return pkg.name
 }
 
-func getPackageJsonVersion(filePath string) (string, error) {
-	pkg, err := fileToPackageJson(filePath)
-	if err != nil {
-		return "", err
-	}
-	return pkg.Version, nil
+func (pkg *npmPackage) Version() string {
+	return pkg.version
+}
+
+func (pkg *npmPackage) Parent() string {
+	return pkg.parent
 }
