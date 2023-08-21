@@ -88,7 +88,6 @@ var ScanCommand = &cobra.Command{
 					printedDep[result.Query.Name] = true
 				}
 			}
-
 		}
 	},
 }
