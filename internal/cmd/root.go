@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/1franck/cvepack/internal/common"
 	"github.com/1franck/cvepack/internal/config"
-	"github.com/1franck/cvepack/internal/update"
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -30,7 +29,7 @@ var RootCmd = &cobra.Command{
 
 		if common.FileExists(config.Default.DatabaseFilePath()) {
 			fmt.Printf("\nCurrent database: %s\n", config.Default.DatabaseFilePath())
-			if needUpdate, _ := update.IsNeeded(config.Default); needUpdate {
+			if IsDatabaseUpdateAvailable() {
 				fmt.Printf("\nA new database is available. Please run 'cvepack update' command.\n")
 			} else {
 				fmt.Printf("Database is up to date.\n")

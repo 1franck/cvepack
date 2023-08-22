@@ -19,7 +19,12 @@ var ScanCommand = &cobra.Command{
 	Long:  "Scan a folder",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(config.Default.NameAndVersion())
-		fmt.Printf("scanning %s\n ...", args[0])
+
+		if IsDatabaseUpdateAvailable() {
+			UpdateDatabase()
+		}
+
+		fmt.Printf("Scanning %s ..\n", args[0])
 		if err := common.ValidateDirectory(args[0]); err != nil {
 			fmt.Printf("path %s not found\n", args[0])
 			return
@@ -45,7 +50,7 @@ var ScanCommand = &cobra.Command{
 		pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
 		for _, ecosystem := range scanJob.Ecosystems {
-			fmt.Printf("[%s] %d package(s) analyzed, ", ecosystem.Name(), len(ecosystem.Packages()))
+			fmt.Printf(" [%s] %d package(s) analyzed, ", ecosystem.Name(), len(ecosystem.Packages()))
 			pkgsVul := scan.Results{}
 			for _, pkg := range ecosystem.Packages() {
 				vulnerabilities, err := pkgVulQuerier.Query(ecosystem.Name(), pkg.Name(), pkg.Version())
@@ -77,14 +82,14 @@ var ScanCommand = &cobra.Command{
 			longestPackageName := pkgsVul.LongestPackageName() + 5
 			for _, result := range pkgsVul {
 				if _, ok := printedDep[result.Query.Name]; !ok {
-					fmt.Printf(" [%s %s] %s %s %s %s %s\n",
+					fmt.Printf("  [%s%s%s] %s %s %s %s\n",
 						packageColor.Sprint(result.Query.Name),
+						infoColor.Sprintf("@"),
 						versionColor.Sprintf(result.Query.Version),
 						strings.Repeat(".", longestPackageName-result.Query.StringLen()),
 						colorizeSeveritySummary(result.Vulnerabilities),
 						strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
-						infoColor.Sprint(result.Vulnerabilities.AliasesSummary()),
-						result.Query.Parent)
+						infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
 					printedDep[result.Query.Name] = true
 				}
 			}

@@ -21,7 +21,7 @@ func (scan *Scan) Run() {
 	waitGroup := sync.WaitGroup{}
 	if npm.DetectPackageJson(scan.Path) {
 		if npm.DetectPackageLockJson(scan.Path) {
-			scan.Log("package-lock.json detected ...")
+			scan.Log("package-lock.json detected!")
 			waitGroup.Add(1)
 			go func() {
 				scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromPackageLockJson(scan.Path))

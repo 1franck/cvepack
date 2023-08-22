@@ -11,20 +11,20 @@ import (
 )
 
 type IsNeededTestCase struct {
-	UpdateNeeded           bool
-	Reason                 internal.ErrorMsg
-	ExpectedUpdateNeeded   bool
-	ExpectedReason         internal.ErrorMsg
-	ExpectedReasonContains string
+	UpdateAvailable         bool
+	Reason                  internal.ErrorMsg
+	ExpectedUpdateAvailable bool
+	ExpectedReason          internal.ErrorMsg
+	ExpectedReasonContains  string
 }
 
-func assertUpdateNeeded(t *testing.T, testCase IsNeededTestCase) {
-	if testCase.ExpectedUpdateNeeded {
-		if !testCase.UpdateNeeded {
+func assertUpdateIsAvailable(t *testing.T, testCase IsNeededTestCase) {
+	if testCase.ExpectedUpdateAvailable {
+		if !testCase.UpdateAvailable {
 			t.Errorf("Should need update: got '%s'", testCase.Reason)
 		}
 	} else {
-		if testCase.UpdateNeeded {
+		if testCase.UpdateAvailable {
 			t.Errorf("Should not need update: got '%s'", testCase.Reason)
 		}
 	}
@@ -40,7 +40,7 @@ func assertUpdateNeeded(t *testing.T, testCase IsNeededTestCase) {
 	}
 }
 
-func Test_Update_IsNeeded_HappyPath(t *testing.T) {
+func Test_Update_IsAvailable_HappyPath(t *testing.T) {
 	defer gock.Off() // Flush pending mocks after test execution
 
 	gock.New("https://raw.githubusercontent.com").
@@ -55,60 +55,60 @@ func Test_Update_IsNeeded_HappyPath(t *testing.T) {
 		DatabaseRootDir: "./_fixtures",
 	})
 
-	var updateNeeded, reason = update.IsNeeded(conf)
-	assertUpdateNeeded(t, IsNeededTestCase{
-		UpdateNeeded:         updateNeeded,
-		Reason:               reason,
-		ExpectedUpdateNeeded: false,
-		ExpectedReason:       internal.EmptyError,
+	var updateAvailable, reason = update.IsAvailable(conf)
+	assertUpdateIsAvailable(t, IsNeededTestCase{
+		UpdateAvailable:         updateAvailable,
+		Reason:                  reason,
+		ExpectedUpdateAvailable: false,
+		ExpectedReason:          internal.EmptyError,
 	})
 }
 
-func Test_Update_IsNeeded_DbFolderNotFound(t *testing.T) {
+func Test_Update_IsAvailable_DbFolderNotFound(t *testing.T) {
 	conf := config.Config{
 		DatabaseRootDir: "./unknown_folder",
 	}
-	var updateNeeded, reason = update.IsNeeded(conf)
+	var updateAvailable, reason = update.IsAvailable(conf)
 
-	assertUpdateNeeded(t, IsNeededTestCase{
-		UpdateNeeded:         updateNeeded,
-		Reason:               reason,
-		ExpectedUpdateNeeded: true,
-		ExpectedReason:       update.ErrorDatabaseFolderNotFound,
+	assertUpdateIsAvailable(t, IsNeededTestCase{
+		UpdateAvailable:         updateAvailable,
+		Reason:                  reason,
+		ExpectedUpdateAvailable: true,
+		ExpectedReason:          update.ErrorDatabaseFolderNotFound,
 	})
 }
 
-func Test_Update_IsNeeded_DbFileNotFound(t *testing.T) {
+func Test_Update_IsAvailable_DbFileNotFound(t *testing.T) {
 	conf := config.FromDefault(config.Config{
 		DatabaseRootDir:  "./_fixtures",
 		DatabaseFileName: "./unknown.db",
 	})
-	var updateNeeded, reason = update.IsNeeded(conf)
+	var updateAvailable, reason = update.IsAvailable(conf)
 
-	assertUpdateNeeded(t, IsNeededTestCase{
-		UpdateNeeded:         updateNeeded,
-		Reason:               reason,
-		ExpectedUpdateNeeded: true,
-		ExpectedReason:       update.ErrorDatabaseFileNotFound,
+	assertUpdateIsAvailable(t, IsNeededTestCase{
+		UpdateAvailable:         updateAvailable,
+		Reason:                  reason,
+		ExpectedUpdateAvailable: true,
+		ExpectedReason:          update.ErrorDatabaseFileNotFound,
 	})
 }
 
-func Test_Update_IsNeeded_DbChecksumFileNotFound(t *testing.T) {
+func Test_Update_IsAvailable_DbChecksumFileNotFound(t *testing.T) {
 	conf := config.FromDefault(config.Config{
 		DatabaseRootDir:          "./_fixtures",
 		DatabaseChecksumFileName: "./unknown.checksum",
 	})
-	var updateNeeded, reason = update.IsNeeded(conf)
+	var updateAvailable, reason = update.IsAvailable(conf)
 
-	assertUpdateNeeded(t, IsNeededTestCase{
-		UpdateNeeded:         updateNeeded,
-		Reason:               reason,
-		ExpectedUpdateNeeded: true,
-		ExpectedReason:       update.ErrorDatabaseChecksumFileNotFound,
+	assertUpdateIsAvailable(t, IsNeededTestCase{
+		UpdateAvailable:         updateAvailable,
+		Reason:                  reason,
+		ExpectedUpdateAvailable: true,
+		ExpectedReason:          update.ErrorDatabaseChecksumFileNotFound,
 	})
 }
 
-func Test_Update_IsNeeded_DatabaseServerChecksumFileInvalid(t *testing.T) {
+func Test_Update_IsAvailable_DatabaseServerChecksumFileInvalid(t *testing.T) {
 	defer gock.Off() // Flush pending mocks after test execution
 
 	gock.DisableNetworking()
@@ -123,17 +123,17 @@ func Test_Update_IsNeeded_DatabaseServerChecksumFileInvalid(t *testing.T) {
 	conf := config.FromDefault(config.Config{
 		DatabaseRootDir: "./_fixtures",
 	})
-	var updateNeeded, reason = update.IsNeeded(conf)
+	var updateAvailable, reason = update.IsAvailable(conf)
 
-	assertUpdateNeeded(t, IsNeededTestCase{
-		UpdateNeeded:           updateNeeded,
-		Reason:                 reason,
-		ExpectedUpdateNeeded:   false,
-		ExpectedReasonContains: "error checking server database checksum:",
+	assertUpdateIsAvailable(t, IsNeededTestCase{
+		UpdateAvailable:         updateAvailable,
+		Reason:                  reason,
+		ExpectedUpdateAvailable: false,
+		ExpectedReasonContains:  "error checking server database checksum:",
 	})
 }
 
-func Test_Update_IsNeeded_DatabaseServerChecksumMismatch(t *testing.T) {
+func Test_Update_IsAvailable_DatabaseServerChecksumMismatch(t *testing.T) {
 	defer gock.Off() // Flush pending mocks after test execution
 
 	gock.New("https://raw.githubusercontent.com").
@@ -148,12 +148,12 @@ func Test_Update_IsNeeded_DatabaseServerChecksumMismatch(t *testing.T) {
 		DatabaseRootDir:          "./_fixtures",
 		DatabaseChecksumFileName: "db.checksum.wrong",
 	})
-	var updateNeeded, reason = update.IsNeeded(conf)
+	var updateAvailable, reason = update.IsAvailable(conf)
 
-	assertUpdateNeeded(t, IsNeededTestCase{
-		UpdateNeeded:         updateNeeded,
-		Reason:               reason,
-		ExpectedUpdateNeeded: true,
-		ExpectedReason:       update.ErrorDatabaseChecksumMismatch,
+	assertUpdateIsAvailable(t, IsNeededTestCase{
+		UpdateAvailable:         updateAvailable,
+		Reason:                  reason,
+		ExpectedUpdateAvailable: true,
+		ExpectedReason:          update.ErrorDatabaseChecksumMismatch,
 	})
 }

@@ -98,7 +98,7 @@ func UpdateDatabase(outputDir string) {
 	}
 }
 
-func IsNeeded(config config.Config) (bool, internal.ErrorMsg) {
+func IsAvailable(config config.Config) (bool, internal.ErrorMsg) {
 	if !common.DirectoryExists(config.DatabaseRootDir) {
 		return true, ErrorDatabaseFolderNotFound
 	} else if !common.FileExists(config.DatabaseFilePath()) {
