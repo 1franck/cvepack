@@ -81,7 +81,7 @@ var ScanCommand = &cobra.Command{
 			printedDep := make(map[string]bool)
 			longestPackageName := pkgsVul.LongestPackageName() + 5
 			for _, result := range pkgsVul {
-				if _, ok := printedDep[result.Query.Name]; !ok {
+				if _, ok := printedDep[result.Query.ToString()]; !ok {
 					fmt.Printf("  [%s%s%s] %s %s %s %s\n",
 						packageColor.Sprint(result.Query.Name),
 						infoColor.Sprintf("@"),
@@ -90,7 +90,7 @@ var ScanCommand = &cobra.Command{
 						colorizeSeveritySummary(result.Vulnerabilities),
 						strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
 						infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
-					printedDep[result.Query.Name] = true
+					printedDep[result.Query.ToString()] = true
 				}
 			}
 		}

@@ -9,6 +9,10 @@ type Project struct {
 	_packages []ecosystem.Package
 }
 
+func NewProject(path string, packages []ecosystem.Package) *Project {
+	return &Project{_path: path, _packages: packages}
+}
+
 func (npm *Project) Name() string {
 	return "npm"
 }

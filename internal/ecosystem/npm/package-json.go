@@ -5,6 +5,25 @@ import (
 	"path/filepath"
 )
 
+type packageJsonFile struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+type packageLockJsonFile struct {
+	Name            string                        `json:"name"`
+	Version         string                        `json:"version"`
+	LockfileVersion int                           `json:"lockfileVersion"`
+	Requires        bool                          `json:"requires"`
+	Packages        map[string]packageLockPackage `json:"packages"`
+}
+
+type packageLockPackage struct {
+	Name         string            `json:"name"`
+	Version      string            `json:"version"`
+	Dependencies map[string]string `json:"dependencies"`
+}
+
 func NewProjectFromPackageLockJson(path string) *Project {
 	npm := &Project{_path: path}
 	pkgLock, err := fileToPackageLockJson(filepath.Join(path, "package-lock.json"))
@@ -26,22 +45,4 @@ func NewProjectFromPackageLockJson(path string) *Project {
 	}
 
 	return npm
-}
-
-func findParents(
-	parents map[string][]string,
-	pkgLock map[string]packageLockPackage,
-	pkgName string, pkgVersion string) map[string][]string {
-	for key, pkgDef := range pkgLock {
-		for depName, depVersion := range pkgDef.Dependencies {
-			if depName == pkgName && depVersion == pkgVersion {
-				if _, ok := parents[key]; !ok {
-					parents[key] = []string{}
-				}
-				parents[key] = append(parents[key], pkgName)
-
-			}
-		}
-	}
-	return parents
 }

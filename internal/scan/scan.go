@@ -27,8 +27,16 @@ func (scan *Scan) Run() {
 				scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromPackageLockJson(scan.Path))
 				waitGroup.Done()
 			}()
+		} else if npm.DetectNodeModules(scan.Path) {
+			scan.Log("node_modules detected!")
+			waitGroup.Add(1)
+			go func() {
+				scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromNodeModules(scan.Path))
+				waitGroup.Done()
+			}()
 		}
 	}
+
 	waitGroup.Wait()
 }
 
