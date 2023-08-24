@@ -1,8 +1,9 @@
 # 0.2.0
 
+- Auto-Update database if needed when using scan subcommand
 - Add go package detection
 - Add packagist package detection
-- Auto-Update database if needed when using scan subcommand
+- Add crates.io package detection
 
 # 0.1.0
 

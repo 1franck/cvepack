@@ -6,15 +6,10 @@ import (
 )
 
 func DetectGoMod(path string) bool {
-	if common.FileExists(filepath.Join(path, "go.mod")) {
-		return true
-	}
-	return false
+	return common.FileExists(filepath.Join(path, "go.mod"))
+
 }
 
 func DetectGoSum(path string) bool {
-	if common.FileExists(filepath.Join(path, "go.sum")) {
-		return true
-	}
-	return false
+	return common.FileExists(filepath.Join(path, "go.sum"))
 }

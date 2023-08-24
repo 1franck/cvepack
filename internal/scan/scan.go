@@ -3,6 +3,7 @@ package scan
 import (
 	"fmt"
 	"github.com/1franck/cvepack/internal/ecosystem"
+	"github.com/1franck/cvepack/internal/ecosystem/cratesio"
 	"github.com/1franck/cvepack/internal/ecosystem/golang"
 	"github.com/1franck/cvepack/internal/ecosystem/npm"
 	"github.com/1franck/cvepack/internal/ecosystem/packagist"
@@ -57,6 +58,17 @@ func (scan *Scan) Run() {
 			waitGroup.Add(1)
 			go func() {
 				scan.Projects = append(scan.Projects, packagist.NewProjectFromComposerLock(scan.Path))
+				waitGroup.Done()
+			}()
+		}
+	}
+
+	if cratesio.DetectCargoToml(scan.Path) {
+		if cratesio.DetectCargoLock(scan.Path) {
+			scan.Log("Cargo.lock detected!")
+			waitGroup.Add(1)
+			go func() {
+				scan.Projects = append(scan.Projects, cratesio.NewProjectFromCargoLock(scan.Path))
 				waitGroup.Done()
 			}()
 		}

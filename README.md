@@ -8,10 +8,11 @@ Be aware, this is a proof of concept and a work in progress.
 
 #### Ecosystems supported
 
-- [x] NPM
+- [x] NPM (Node.js)
 - [x] Go
-- [x] Packagist
-- [ ] NuGet
+- [x] Packagist (PHP)
+- [x] Crates.io (Rust)
+- [ ] NuGet (.Net)
 
 ## Usage
 

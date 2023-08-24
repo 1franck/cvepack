@@ -6,22 +6,13 @@ import (
 )
 
 func DetectPackageJson(path string) bool {
-	if common.FileExists(filepath.Join(path, PackageFile)) {
-		return true
-	}
-	return false
+	return common.FileExists(filepath.Join(path, PackageFile))
 }
 
 func DetectPackageLockJson(path string) bool {
-	if common.FileExists(filepath.Join(path, PackageLockFile)) {
-		return true
-	}
-	return false
+	return common.FileExists(filepath.Join(path, PackageLockFile))
 }
 
 func DetectNodeModules(path string) bool {
-	if common.DirectoryExists(filepath.Join(path, NodeModulesFolder)) {
-		return true
-	}
-	return false
+	return common.DirectoryExists(filepath.Join(path, NodeModulesFolder))
 }
