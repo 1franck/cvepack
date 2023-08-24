@@ -32,11 +32,3 @@ func fileToPackageJson(filePath string) (*packageJsonFile, error) {
 
 	return &pkg, nil
 }
-
-//func getPackageJsonVersion(filePath string) (string, error) {
-//	pkg, err := fileToPackageJson(filePath)
-//	if err != nil {
-//		return "", err
-//	}
-//	return pkg.Version, nil
-//}

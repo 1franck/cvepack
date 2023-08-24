@@ -10,7 +10,7 @@ import (
 )
 
 func NewProjectFromNodeModules(path string) ecosystem.Project {
-	path = filepath.Join(path, "node_modules")
+	path = filepath.Join(path, NodeModulesFolder)
 	return ecosystem.NewProject(path, EcosystemName, scanNodeModules(path))
 }
 
@@ -24,7 +24,7 @@ func scanNodeModules(path string) ecosystem.Packages {
 				return nil
 			}
 
-			packageJsonFile := filepath.Join(p, "package.json")
+			packageJsonFile := filepath.Join(p, PackageFile)
 			if !common.FileExists(packageJsonFile) {
 				return nil
 			}

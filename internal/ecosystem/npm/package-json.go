@@ -27,7 +27,8 @@ type packageLockPackage struct {
 
 func NewProjectFromPackageLockJson(path string) ecosystem.Project {
 	pkgs := ecosystem.Packages{}
-	pkgLock, err := fileToPackageLockJson(filepath.Join(path, "package-lock.json"))
+	file := filepath.Join(path, PackageLockFile)
+	pkgLock, err := fileToPackageLockJson(file)
 
 	if err == nil {
 		for pkgKey, pkg := range pkgLock.Packages {
@@ -41,8 +42,7 @@ func NewProjectFromPackageLockJson(path string) ecosystem.Project {
 			pkgs = append(pkgs, NewPackage(pkgKey, pkg.Version))
 		}
 	} else {
-		log.Println(filepath.Join(path, "package-lock.json"))
-		log.Println(err)
+		log.Printf("Error while loadding file %s : %s", file, err)
 	}
 
 	return ecosystem.NewProject(path, EcosystemName, pkgs)

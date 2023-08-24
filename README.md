@@ -10,6 +10,7 @@ Be aware, this is a proof of concept and a work in progress.
 
 - [x] NPM
 - [x] Go
+- [x] Packagist
 - [ ] NuGet
 
 ## Usage

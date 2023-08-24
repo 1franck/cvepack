@@ -6,28 +6,21 @@ import (
 )
 
 func DetectPackageJson(path string) bool {
-	if common.FileExists(filepath.Join(path, "package.json")) {
+	if common.FileExists(filepath.Join(path, PackageFile)) {
 		return true
 	}
 	return false
 }
 
 func DetectPackageLockJson(path string) bool {
-	if common.FileExists(filepath.Join(path, "package-lock.json")) {
+	if common.FileExists(filepath.Join(path, PackageLockFile)) {
 		return true
 	}
 	return false
 }
 
 func DetectNodeModules(path string) bool {
-	if common.DirectoryExists(filepath.Join(path, "node_modules")) {
-		return true
-	}
-	return false
-}
-
-func DetectYarnLock(path string) bool {
-	if common.FileExists(filepath.Join(path, "yarn.lock")) {
+	if common.DirectoryExists(filepath.Join(path, NodeModulesFolder)) {
 		return true
 	}
 	return false

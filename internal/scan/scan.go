@@ -5,6 +5,7 @@ import (
 	"github.com/1franck/cvepack/internal/ecosystem"
 	"github.com/1franck/cvepack/internal/ecosystem/golang"
 	"github.com/1franck/cvepack/internal/ecosystem/npm"
+	"github.com/1franck/cvepack/internal/ecosystem/packagist"
 	"sync"
 )
 
@@ -45,6 +46,17 @@ func (scan *Scan) Run() {
 			waitGroup.Add(1)
 			go func() {
 				scan.Projects = append(scan.Projects, golang.NewProjectFromGoSum(scan.Path))
+				waitGroup.Done()
+			}()
+		}
+	}
+
+	if packagist.DetectComposerJson(scan.Path) {
+		if packagist.DetectComposerLock(scan.Path) {
+			scan.Log("composer.lock detected!")
+			waitGroup.Add(1)
+			go func() {
+				scan.Projects = append(scan.Projects, packagist.NewProjectFromComposerLock(scan.Path))
 				waitGroup.Done()
 			}()
 		}
