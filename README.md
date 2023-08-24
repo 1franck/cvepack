@@ -9,7 +9,7 @@ Be aware, this is a proof of concept and a work in progress.
 #### Ecosystems supported
 
 - [x] NPM
-- [ ] Go
+- [x] Go
 - [ ] NuGet
 
 ## Usage

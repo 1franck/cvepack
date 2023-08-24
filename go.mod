@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/axllent/semver v0.0.1
+	github.com/gookit/color v1.5.4
 	github.com/h2non/gock v1.2.0
 	github.com/spf13/cobra v1.7.0
 	modernc.org/sqlite v1.25.0
@@ -12,7 +13,6 @@ require (
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gookit/color v1.5.4 // indirect
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
