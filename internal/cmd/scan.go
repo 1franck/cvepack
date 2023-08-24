@@ -49,11 +49,11 @@ var ScanCommand = &cobra.Command{
 
 		pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
-		for _, ecosystem := range scanJob.Ecosystems {
-			fmt.Printf(" [%s] %d package(s) analyzed, ", ecosystem.Name(), len(ecosystem.Packages()))
+		for _, project := range scanJob.Projects {
+			fmt.Printf(" [%s] %d package(s) analyzed, ", project.Ecosystem(), len(project.Packages()))
 			pkgsVul := scan.Results{}
-			for _, pkg := range ecosystem.Packages() {
-				vulnerabilities, err := pkgVulQuerier.Query(ecosystem.Name(), pkg.Name(), pkg.Version())
+			for _, pkg := range project.Packages() {
+				vulnerabilities, err := pkgVulQuerier.Query(project.Ecosystem(), pkg.Name(), pkg.Version())
 				if err != nil {
 					log.Fatal(err)
 				}

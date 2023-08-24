@@ -9,9 +9,9 @@ import (
 )
 
 type Scan struct {
-	Path       string
-	Ecosystems []ecosystem.Ecosystem
-	Verbose    bool
+	Path     string
+	Projects []ecosystem.Project
+	Verbose  bool
 }
 
 func NewScan(path string) *Scan {
@@ -26,14 +26,14 @@ func (scan *Scan) Run() {
 			scan.Log("package-lock.json detected!")
 			waitGroup.Add(1)
 			go func() {
-				scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromPackageLockJson(scan.Path))
+				scan.Projects = append(scan.Projects, npm.NewProjectFromPackageLockJson(scan.Path))
 				waitGroup.Done()
 			}()
 		} else if npm.DetectNodeModules(scan.Path) {
 			scan.Log("node_modules detected!")
 			waitGroup.Add(1)
 			go func() {
-				scan.Ecosystems = append(scan.Ecosystems, npm.NewProjectFromNodeModules(scan.Path))
+				scan.Projects = append(scan.Projects, npm.NewProjectFromNodeModules(scan.Path))
 				waitGroup.Done()
 			}()
 		}
@@ -44,7 +44,7 @@ func (scan *Scan) Run() {
 			scan.Log("go.sum detected!")
 			waitGroup.Add(1)
 			go func() {
-				scan.Ecosystems = append(scan.Ecosystems, golang.NewProjectFromGoSum(scan.Path))
+				scan.Projects = append(scan.Projects, golang.NewProjectFromGoSum(scan.Path))
 				waitGroup.Done()
 			}()
 		}

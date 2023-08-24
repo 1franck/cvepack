@@ -9,13 +9,13 @@ import (
 	"slices"
 )
 
-func NewProjectFromNodeModules(path string) *Project {
+func NewProjectFromNodeModules(path string) ecosystem.Project {
 	path = filepath.Join(path, "node_modules")
-	return NewProject(path, scanNodeModules(path))
+	return ecosystem.NewProject(path, EcosystemName, scanNodeModules(path))
 }
 
-func scanNodeModules(path string) []ecosystem.Package {
-	var packages []ecosystem.Package
+func scanNodeModules(path string) ecosystem.Packages {
+	var packages ecosystem.Packages
 	var excludedPaths = []string{".bin", ".pnpm"}
 
 	err := filepath.Walk(path,

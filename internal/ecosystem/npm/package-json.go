@@ -1,6 +1,7 @@
 package npm
 
 import (
+	"github.com/1franck/cvepack/internal/ecosystem"
 	"log"
 	"path/filepath"
 )
@@ -24,8 +25,8 @@ type packageLockPackage struct {
 	Dependencies map[string]string `json:"dependencies"`
 }
 
-func NewProjectFromPackageLockJson(path string) *Project {
-	npm := &Project{_path: path}
+func NewProjectFromPackageLockJson(path string) ecosystem.Project {
+	pkgs := ecosystem.Packages{}
 	pkgLock, err := fileToPackageLockJson(filepath.Join(path, "package-lock.json"))
 
 	if err == nil {
@@ -37,12 +38,12 @@ func NewProjectFromPackageLockJson(path string) *Project {
 				// reference to a local package
 				pkgKey = pkg.Name
 			}
-			npm._packages = append(npm._packages, NewPackage(pkgKey, pkg.Version))
+			pkgs = append(pkgs, NewPackage(pkgKey, pkg.Version))
 		}
 	} else {
 		log.Println(filepath.Join(path, "package-lock.json"))
 		log.Println(err)
 	}
 
-	return npm
+	return ecosystem.NewProject(path, EcosystemName, pkgs)
 }

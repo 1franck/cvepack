@@ -2,20 +2,21 @@ package golang
 
 import (
 	"github.com/1franck/cvepack/internal/common"
+	"github.com/1franck/cvepack/internal/ecosystem"
 	"log"
 	"path/filepath"
 	"strings"
 )
 
-func NewProjectFromGoSum(path string) *Project {
-	project := &Project{_path: path}
-	gosumContent, err := common.ReadAllFile(filepath.Join(path, "go.sum"))
+func NewProjectFromGoSum(path string) ecosystem.Project {
+	pkgs := ecosystem.Packages{}
+	goSumContent, err := common.ReadAllFile(filepath.Join(path, "go.sum"))
 	if err != nil {
 		log.Println(err)
-		return project
+		return ecosystem.NewProject(path, EcosystemName, pkgs)
 	}
 
-	lines := strings.Split(string(gosumContent), "\n")
+	lines := strings.Split(string(goSumContent), "\n")
 
 	for _, line := range lines {
 		if line == "" {
@@ -27,12 +28,10 @@ func NewProjectFromGoSum(path string) *Project {
 			continue
 		}
 
-		pkgName := parts[0]
-		pkgVersion := parts[1][1:]
-
-		pkg := NewPackage(pkgName, pkgVersion)
-		project._packages = append(project._packages, pkg)
+		name := parts[0]
+		version := parts[1][1:]
+		pkgs = append(pkgs, ecosystem.NewDefaultPackage(name, version, ""))
 	}
 
-	return project
+	return ecosystem.NewProject(path, EcosystemName, pkgs)
 }
