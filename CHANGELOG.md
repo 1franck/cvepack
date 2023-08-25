@@ -1,5 +1,6 @@
 # 0.3.0
 
+- Add search subcommand
 - Add --details/-d flag to scan subcommand
 - Add support of multiple paths to scan subcommand
 - Fix crates.io version parsing

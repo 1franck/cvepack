@@ -1,4 +1,4 @@
-# CVEPACK
+# CVEPack
 
 CVEPack is a tool to detect vulnerabilities in packages. 
 
