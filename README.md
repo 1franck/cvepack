@@ -16,10 +16,10 @@ Be aware, this is a proof of concept and a work in progress.
 
 ## Usage
 
-#### Scan a folder
+#### Scan folder(s)
 
 ```bash
-$ cvepack scan <folder path>
+$ cvepack scan <folder path> [<folder path> ...]
 ```
 
 #### Update CVE database
