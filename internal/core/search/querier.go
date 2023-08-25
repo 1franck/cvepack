@@ -2,28 +2,23 @@ package search
 
 import (
 	"database/sql"
-	"github.com/axllent/semver"
+	"fmt"
+	"github.com/1franck/cvepack/internal/core"
 	"log"
 )
 
-var query = `
-    SELECT a.id, a.vulnerability_id, a.package_ecosystem, a.package_name, ar.e_fixed, ar.e_introduced, ar.e_last_affected, v.summary, v.details, v.aliases, v.database_specific
-    FROM affected a
-	JOIN vulnerabilities v ON a.vulnerability_id = v.id
-    JOIN affected_ranges ar ON a.id = ar.affected_id
-    WHERE a.package_ecosystem = ? AND a.package_name = ?
-`
-
 func PackageVulnerabilityQuerier(db *sql.DB) *packageVulnerabilityQuerier {
-	return &packageVulnerabilityQuerier{db}
+	sqlQuery := fmt.Sprint(baseSqlQuery, "WHERE a.package_ecosystem = ? AND a.package_name = ?")
+	return &packageVulnerabilityQuerier{db, sqlQuery}
 }
 
 type packageVulnerabilityQuerier struct {
-	db *sql.DB
+	db       *sql.DB
+	sqlQuery string
 }
 
-func (pvq packageVulnerabilityQuerier) Query(ecosystem, packageName string, packageVersion string) (PackageVulnerabilities, error) {
-	stmt, err := pvq.db.Prepare(query)
+func (pvq packageVulnerabilityQuerier) Query(ecosystem, packageName, packageVersion string) (PackageVulnerabilities, error) {
+	stmt, err := pvq.db.Prepare(pvq.sqlQuery)
 	if err != nil {
 		log.Printf("error while preparing query: %s", err)
 		return nil, err
@@ -88,15 +83,16 @@ func (pvq packageVulnerabilityQuerier) mapRow(rows *sql.Rows) (*PackageVulnerabi
 
 func (pvq packageVulnerabilityQuerier) isActive(pkg PackageVulnerability, pkgVersion string) bool {
 	if pkg.VersionFixed != nil {
-		if semver.Compare(*pkg.VersionFixed, pkgVersion) == -1 { // 1 mean vulnerability VersionFixed > current pkgVersion
-			return false
-		}
-		return true
+		return core.IsVersionAffectedByFixedVersion(
+			pkgVersion,
+			pkg.VersionIntroduced,
+			*pkg.VersionFixed)
+
 	} else if pkg.VersionLastAffected != nil {
-		if semver.Compare(*pkg.VersionLastAffected, pkgVersion) == -1 { // 1 mean vulnerability VersionLastAffected > current pkgVersion
-			return false
-		}
-		return true
+		return core.IsVersionInRange(
+			pkgVersion,
+			pkg.VersionIntroduced,
+			*pkg.VersionLastAffected)
 	}
 
 	return true
