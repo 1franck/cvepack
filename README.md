@@ -22,6 +22,12 @@ Be aware, this is a proof of concept and a work in progress.
 $ cvepack scan <folder path> [<folder path> ...]
 ```
 
+#### Search a package
+
+```bash
+$ cvepack search <package name>
+```
+
 #### Update CVE database
 
 ```bash
