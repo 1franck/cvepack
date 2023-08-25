@@ -1,4 +1,4 @@
-# CVEPack
+# :customs: CVEPack
 
 CVEPack is a tool to detect vulnerabilities in packages. 
 
