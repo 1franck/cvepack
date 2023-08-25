@@ -20,6 +20,12 @@ func NewScan(path string) *Scan {
 	return &Scan{Path: path}
 }
 
+func (scan *Scan) Log(msg string) {
+	if scan.Verbose {
+		fmt.Println(msg)
+	}
+}
+
 func (scan *Scan) Run() {
 	waitGroup := sync.WaitGroup{}
 
@@ -75,10 +81,4 @@ func (scan *Scan) Run() {
 	}
 
 	waitGroup.Wait()
-}
-
-func (scan *Scan) Log(msg string) {
-	if scan.Verbose {
-		fmt.Println(msg)
-	}
 }

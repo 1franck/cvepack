@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+var showDetails bool
+
 var ScanCommand = &cobra.Command{
 	Use:   "scan",
 	Short: "Scan a folder",
@@ -23,16 +25,6 @@ var ScanCommand = &cobra.Command{
 		if IsDatabaseUpdateAvailable() {
 			UpdateDatabase()
 		}
-
-		fmt.Printf("Scanning %s ..\n", args[0])
-		if err := common.ValidateDirectory(args[0]); err != nil {
-			fmt.Printf("path %s not found\n", args[0])
-			return
-		}
-
-		scanJob := scan.NewScan(args[0])
-		scanJob.Verbose = true
-		scanJob.Run()
 
 		db, err := sqlite.Connect(config.Default.DatabaseFilePath())
 		defer func(db *sql.DB) {
@@ -47,54 +39,83 @@ var ScanCommand = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
+		for _, path := range args {
+			fmt.Printf("Scanning %s ..\n", path)
+			if err := common.ValidateDirectory(path); err != nil {
+				fmt.Printf("path %s not found\n", path)
+				return
+			}
+			scanPath(path, db)
+		}
+	},
+}
 
-		for _, project := range scanJob.Projects {
-			fmt.Printf(" [%s] %d package(s) analyzed, ", project.Ecosystem(), len(project.Packages()))
-			pkgsVul := scan.Results{}
-			for _, pkg := range project.Packages() {
-				vulnerabilities, err := pkgVulQuerier.Query(project.Ecosystem(), pkg.Name(), pkg.Version())
-				if err != nil {
-					log.Fatal(err)
-				}
+func init() {
+	ScanCommand.Flags().BoolVarP(&showDetails, "details", "d", false, "show details")
+}
 
-				if vulnerabilities.IsEmpty() {
-					continue
-				}
+func scanPath(path string, db *sql.DB) {
+	scanJob := scan.NewScan(path)
+	scanJob.Verbose = true
+	scanJob.Run()
 
-				pkgsVul.Append(pkg, vulnerabilities)
+	pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
+
+	for _, project := range scanJob.Projects {
+		fmt.Printf(" [%s] %d package(s) analyzed, ", project.Ecosystem(), len(project.Packages()))
+		pkgsVul := scan.Results{}
+		for _, pkg := range project.Packages() {
+			vulnerabilities, err := pkgVulQuerier.Query(project.Ecosystem(), pkg.Name(), pkg.Version())
+			if err != nil {
+				log.Fatal(err)
 			}
 
-			problemsWord := "problem"
-			packageAffectedCount := pkgsVul.UniqueResultCount()
-			if packageAffectedCount == 0 {
-				fmt.Printf("no %s found\n", problemsWord)
+			if vulnerabilities.IsEmpty() {
 				continue
 			}
 
-			if packageAffectedCount > 1 {
-				problemsWord += "s"
-			}
+			pkgsVul.Append(pkg, vulnerabilities)
+		}
 
-			fmt.Printf("%d %s found:\n", packageAffectedCount, problemsWord)
+		problemsWord := "problem"
+		packageAffectedCount := pkgsVul.UniqueResultCount()
+		if packageAffectedCount == 0 {
+			fmt.Printf("no %s found\n", problemsWord)
+			continue
+		}
 
-			printedDep := make(map[string]bool)
-			longestPackageName := pkgsVul.LongestPackageName() + 5
-			for _, result := range pkgsVul {
-				if _, ok := printedDep[result.Query.ToString()]; !ok {
-					fmt.Printf("  [%s%s%s] %s %s %s %s\n",
-						packageColor.Sprint(result.Query.Name),
-						infoColor.Sprintf("@"),
-						versionColor.Sprintf(result.Query.Version),
-						strings.Repeat(".", longestPackageName-result.Query.StringLen()),
-						colorizeSeveritySummary(result.Vulnerabilities),
-						strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
-						infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
-					printedDep[result.Query.ToString()] = true
+		if packageAffectedCount > 1 {
+			problemsWord += "s"
+		}
+
+		fmt.Printf("%d %s found:\n", packageAffectedCount, problemsWord)
+
+		printedDep := make(map[string]bool)
+		longestPackageName := pkgsVul.LongestPackageName() + 5
+		for _, result := range pkgsVul {
+			if _, ok := printedDep[result.Query.ToString()]; !ok {
+
+				fmt.Printf("  [%s%s%s] %s %s %s %s\n",
+					packageColor.Sprint(result.Query.Name),
+					infoColor.Sprintf("@"),
+					versionColor.Sprintf(result.Query.Version),
+					strings.Repeat(".", longestPackageName-result.Query.StringLen()),
+					colorizeSeveritySummary(result.Vulnerabilities),
+					strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
+					infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
+
+				printedDep[result.Query.ToString()] = true
+
+				if showDetails {
+					for _, vul := range result.Vulnerabilities {
+						fmt.Printf("    (%s) %s\n", vul.VulnerabilityId, vul.Summary)
+					}
 				}
 			}
 		}
-	},
+
+		fmt.Println()
+	}
 }
 
 func colorizeSeveritySummary(vul search.PackageVulnerabilities) string {
