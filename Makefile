@@ -16,6 +16,7 @@ UPLOAD_DB_BIN_PATH = ./bin/$(UPLOAD_DB_BIN)
 GO_ENV_DARWIN_64 = GOARCH=amd64 GOOS=darwin
 GO_ENV_LINUX_64 = GOARCH=amd64 GOOS=linux
 GO_ENV_WIN_64 = GOARCH=amd64 GOOS=windows
+GO_ENV_ARM_64 = GOARCH=arm64 GOOS=linux GOARM=7
 
 GO_PROD_FLAGS = -ldflags "-s -w"
 
@@ -59,6 +60,12 @@ build-prod:
 	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-linux $(UPLOAD_DB_CMD)
 	$(GO_ENV_WIN_64) go build $(GO_PROD_FLAGS) -o $(UPLOAD_DB_BIN_PATH)-win.exe $(UPLOAD_DB_CMD)
 
+build-gh:
+	$(GO_ENV_DARWIN_64) go build $(GO_PROD_FLAGS) -o ./bin/darwin/$(MAIN_BIN) $(MAIN_CMD)
+	$(GO_ENV_LINUX_64) go build $(GO_PROD_FLAGS) -o ./bin/linux/$(MAIN_BIN) $(MAIN_CMD)
+	$(GO_ENV_WIN_64) go build $(GO_PROD_FLAGS) -o ./bin/win/$(MAIN_BIN).exe $(MAIN_CMD)
+	$(GO_ENV_ARM_64) go build $(GO_PROD_FLAGS) -o ./bin/arm/$(MAIN_BIN) $(MAIN_CMD)
+
 build-arm64:
 	GOOS=linux GOARM=7 GOARCH=arm64 go build $(GO_PROD_FLAGS) -o $(MAIN_BIN_PATH)-arm $(MAIN_CMD)
 	GOOS=linux GOARM=7 GOARCH=arm64 go build $(GO_PROD_FLAGS) -o $(DB_COMPILER_BIN_PATH)-arm $(DB_COMPILER_CMD)
@@ -81,6 +88,10 @@ clean:
 	rm $(UPLOAD_DB_BIN_PATH)-darwin
 	rm $(UPLOAD_DB_BIN_PATH)-linux
 	rm $(UPLOAD_DB_BIN_PATH)-win.exe
+	rm ./bin/darwin/$(MAIN_BIN)
+	rm ./bin/linux/$(MAIN_BIN)
+	rm ./bin/win/$(MAIN_BIN).exe
+	rm ./bin/arm/$(MAIN_BIN)
 
 version:
 	@echo $(VERSION)
