@@ -7,6 +7,7 @@ import (
 	"github.com/1franck/cvepack/internal/ecosystem/golang"
 	"github.com/1franck/cvepack/internal/ecosystem/npm"
 	"github.com/1franck/cvepack/internal/ecosystem/packagist"
+	"github.com/1franck/cvepack/internal/ecosystem/rubygems"
 	"sync"
 )
 
@@ -75,6 +76,17 @@ func (scan *Scan) Run() {
 			waitGroup.Add(1)
 			go func() {
 				scan.Projects = append(scan.Projects, cratesio.NewProjectFromCargoLock(scan.Path))
+				waitGroup.Done()
+			}()
+		}
+	}
+
+	if rubygems.DetectGemFile(scan.Path) {
+		if rubygems.DetectGemFileLock(scan.Path) {
+			scan.Log("Gemfile.lock detected!")
+			waitGroup.Add(1)
+			go func() {
+				scan.Projects = append(scan.Projects, rubygems.NewProjectFromGemFileLock(scan.Path))
 				waitGroup.Done()
 			}()
 		}

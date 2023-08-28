@@ -4,6 +4,7 @@
 - Add --details/-d flag to scan subcommand
 - Add support of multiple paths to scan subcommand
 - Fix crates.io version parsing
+- Add RubyGems package detection
 
 # 0.2.0
 
