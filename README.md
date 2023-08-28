@@ -20,17 +20,17 @@ Be aware, this is a proof of concept and a work in progress.
 #### Scan folder(s)
 
 ```bash
-$ cvepack scan <folder path> [<folder path> ...]
+cvepack scan <folder path> [<folder path> ...]
 ```
 
 #### Search a package
 
 ```bash
-$ cvepack search <package name>
+cvepack search <package name>
 ```
 
 #### Update CVE database
 
 ```bash
-$ cvepack update
+cvepack update
 ```
