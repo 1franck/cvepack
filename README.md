@@ -12,6 +12,7 @@ Be aware, this is a proof of concept and a work in progress.
 - [x] Go
 - [x] Packagist (PHP)
 - [x] Crates.io (Rust)
+- [x] RubyGems (Ruby)
 - [ ] NuGet (.Net)
 
 ## Usage
