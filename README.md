@@ -13,6 +13,7 @@ Be aware, this is a proof of concept and a work in progress.
 - [x] Packagist (PHP)
 - [x] Crates.io (Rust)
 - [x] RubyGems (Ruby)
+- [x] PyPI (Python)
 - [ ] NuGet (.Net)
 
 ## Usage

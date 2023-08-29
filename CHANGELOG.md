@@ -5,6 +5,7 @@
 - Add support of multiple paths to scan subcommand
 - Fix crates.io version parsing
 - Add RubyGems package detection
+- Add PyPI package detection
 
 # 0.2.0
 
