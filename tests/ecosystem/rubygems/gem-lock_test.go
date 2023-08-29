@@ -1,7 +1,7 @@
 package rubygems
 
 import (
-	"cvepack/internal/ecosystem/rubygems"
+	"cvepack/core/ecosystem/rubygems"
 	"testing"
 )
 

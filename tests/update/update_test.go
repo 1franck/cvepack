@@ -1,9 +1,9 @@
 package update
 
 import (
-	"cvepack/internal"
-	"cvepack/internal/config"
-	"cvepack/internal/update"
+	"cvepack/core"
+	"cvepack/core/config"
+	"cvepack/core/update"
 	"github.com/h2non/gock"
 	"net/http"
 	"strings"
@@ -12,9 +12,9 @@ import (
 
 type IsNeededTestCase struct {
 	UpdateAvailable         bool
-	Reason                  internal.ErrorMsg
+	Reason                  core.ErrorMsg
 	ExpectedUpdateAvailable bool
-	ExpectedReason          internal.ErrorMsg
+	ExpectedReason          core.ErrorMsg
 	ExpectedReasonContains  string
 }
 
@@ -60,7 +60,7 @@ func Test_Update_IsAvailable_HappyPath(t *testing.T) {
 		UpdateAvailable:         updateAvailable,
 		Reason:                  reason,
 		ExpectedUpdateAvailable: false,
-		ExpectedReason:          internal.EmptyError,
+		ExpectedReason:          core.EmptyError,
 	})
 }
 

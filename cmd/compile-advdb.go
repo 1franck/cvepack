@@ -1,11 +1,11 @@
 package main
 
 import (
-	"cvepack/internal/common"
-	"cvepack/internal/core"
-	"cvepack/internal/git"
-	"cvepack/internal/osv"
-	"cvepack/internal/sqlite"
+	"cvepack/core/common"
+	"cvepack/core/database"
+	"cvepack/core/git"
+	"cvepack/core/osv"
+	"cvepack/core/sqlite"
 	"database/sql"
 	"encoding/json"
 	"flag"
@@ -85,7 +85,7 @@ func main() {
 	}(db)
 	logFatal(err)
 
-	_, err = db.Exec(core.DbSchema)
+	_, err = db.Exec(database.DbSchema)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func main() {
 			log.Printf("Error decoding %s : %s\n", jsonFile, err)
 			continue
 		}
-		err = core.InsertVulnerability(db, vul)
+		err = database.InsertVulnerability(db, vul)
 		if err != nil {
 			log.Printf("Error inserting %s : %s\n", jsonFile, err)
 			continue

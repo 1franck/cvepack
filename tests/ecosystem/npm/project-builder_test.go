@@ -1,7 +1,7 @@
 package npm
 
 import (
-	"cvepack/internal/ecosystem/npm"
+	"cvepack/core/ecosystem/npm"
 	"testing"
 )
 

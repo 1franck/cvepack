@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cvepack/internal/cmd"
+	"cvepack/core/cmd"
 	"fmt"
 	"os"
 )

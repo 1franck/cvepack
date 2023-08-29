@@ -2,10 +2,10 @@
 package main
 
 import (
-	"cvepack/internal/common"
-	"cvepack/internal/common/checksum"
-	"cvepack/internal/core"
-	"cvepack/internal/git"
+	"cvepack/core/common"
+	"cvepack/core/common/checksum"
+	"cvepack/core/database"
+	"cvepack/core/git"
 	"flag"
 	"fmt"
 	"io"
@@ -33,7 +33,7 @@ func main() {
 
 	// Check database if ok
 	log.Println("Checking database...")
-	err := core.IsDatabaseOk(*advDbFilePath)
+	err := database.IsDatabaseOk(*advDbFilePath)
 	if err != nil {
 		log.Fatalf("Error checking database: %s", err)
 	}
