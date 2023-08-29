@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"cvepack/internal/config"
 	"fmt"
-	"github.com/1franck/cvepack/internal/config"
 	"github.com/spf13/cobra"
 )
 

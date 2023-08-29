@@ -1,7 +1,7 @@
 package npm
 
 import (
-	"github.com/1franck/cvepack/internal/ecosystem"
+	"cvepack/internal/ecosystem"
 	"log"
 	"path/filepath"
 )

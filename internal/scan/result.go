@@ -1,8 +1,8 @@
 package scan
 
 import (
-	"github.com/1franck/cvepack/internal/core/search"
-	"github.com/1franck/cvepack/internal/ecosystem"
+	"cvepack/internal/core/search"
+	"cvepack/internal/ecosystem"
 )
 
 type Results []*PackageVulnerabilitiesResult

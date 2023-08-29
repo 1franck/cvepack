@@ -1,7 +1,7 @@
 package pypi
 
 import (
-	"github.com/1franck/cvepack/internal/ecosystem"
+	"cvepack/internal/ecosystem"
 	"strings"
 )
 

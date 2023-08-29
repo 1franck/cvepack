@@ -1,8 +1,8 @@
 package main
 
 import (
+	"cvepack/internal/cmd"
 	"fmt"
-	"github.com/1franck/cvepack/internal/cmd"
 	"os"
 )
 

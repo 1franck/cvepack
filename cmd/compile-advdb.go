@@ -1,14 +1,14 @@
 package main
 
 import (
+	"cvepack/internal/common"
+	"cvepack/internal/core"
+	"cvepack/internal/git"
+	"cvepack/internal/osv"
+	"cvepack/internal/sqlite"
 	"database/sql"
 	"encoding/json"
 	"flag"
-	"github.com/1franck/cvepack/internal/common"
-	"github.com/1franck/cvepack/internal/core"
-	"github.com/1franck/cvepack/internal/git"
-	"github.com/1franck/cvepack/internal/osv"
-	"github.com/1franck/cvepack/internal/sqlite"
 	"log"
 	_ "modernc.org/sqlite"
 	"os"

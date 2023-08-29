@@ -1,8 +1,8 @@
 package npm
 
 import (
+	"cvepack/internal/common"
 	"encoding/json"
-	"github.com/1franck/cvepack/internal/common"
 )
 
 func fileToPackageLockJson(filePath string) (*packageLockJsonFile, error) {

@@ -2,12 +2,12 @@
 package main
 
 import (
+	"cvepack/internal/common"
+	"cvepack/internal/common/checksum"
+	"cvepack/internal/core"
+	"cvepack/internal/git"
 	"flag"
 	"fmt"
-	"github.com/1franck/cvepack/internal/common"
-	"github.com/1franck/cvepack/internal/common/checksum"
-	"github.com/1franck/cvepack/internal/core"
-	"github.com/1franck/cvepack/internal/git"
 	"io"
 	"log"
 	"os"

@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"cvepack/internal/config"
+	"cvepack/internal/core"
+	"cvepack/internal/update"
 	"fmt"
-	"github.com/1franck/cvepack/internal/config"
-	"github.com/1franck/cvepack/internal/core"
-	"github.com/1franck/cvepack/internal/update"
 	"github.com/spf13/cobra"
 )
 

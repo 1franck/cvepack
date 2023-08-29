@@ -1,14 +1,14 @@
 package scan
 
 import (
+	"cvepack/internal/ecosystem"
+	"cvepack/internal/ecosystem/cratesio"
+	"cvepack/internal/ecosystem/golang"
+	"cvepack/internal/ecosystem/npm"
+	"cvepack/internal/ecosystem/packagist"
+	"cvepack/internal/ecosystem/pypi"
+	"cvepack/internal/ecosystem/rubygems"
 	"fmt"
-	"github.com/1franck/cvepack/internal/ecosystem"
-	"github.com/1franck/cvepack/internal/ecosystem/cratesio"
-	"github.com/1franck/cvepack/internal/ecosystem/golang"
-	"github.com/1franck/cvepack/internal/ecosystem/npm"
-	"github.com/1franck/cvepack/internal/ecosystem/packagist"
-	"github.com/1franck/cvepack/internal/ecosystem/pypi"
-	"github.com/1franck/cvepack/internal/ecosystem/rubygems"
 	"sync"
 )
 

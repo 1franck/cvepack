@@ -1,4 +1,4 @@
-module github.com/1franck/cvepack
+module cvepack
 
 go 1.21
 

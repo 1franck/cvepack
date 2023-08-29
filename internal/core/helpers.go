@@ -1,8 +1,8 @@
 package core
 
 import (
+	"cvepack/internal/sqlite"
 	"errors"
-	"github.com/1franck/cvepack/internal/sqlite"
 )
 
 func IsDatabaseOk(dbPath string) error {

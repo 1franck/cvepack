@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"cvepack/internal/config"
+	"cvepack/internal/core/search"
+	"cvepack/internal/sqlite"
 	"database/sql"
 	"fmt"
-	"github.com/1franck/cvepack/internal/config"
-	"github.com/1franck/cvepack/internal/core/search"
-	"github.com/1franck/cvepack/internal/sqlite"
 	"github.com/spf13/cobra"
 	"log"
 )

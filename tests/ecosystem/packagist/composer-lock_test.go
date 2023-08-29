@@ -1,7 +1,7 @@
 package packagist
 
 import (
-	"github.com/1franck/cvepack/internal/ecosystem/packagist"
+	"cvepack/internal/ecosystem/packagist"
 	"testing"
 )
 

@@ -1,7 +1,7 @@
 package cratesio
 
 import (
-	"github.com/1franck/cvepack/internal/ecosystem/cratesio"
+	"cvepack/internal/ecosystem/cratesio"
 	"testing"
 )
 

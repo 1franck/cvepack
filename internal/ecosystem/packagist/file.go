@@ -1,8 +1,8 @@
 package packagist
 
 import (
+	"cvepack/internal/common"
 	"encoding/json"
-	"github.com/1franck/cvepack/internal/common"
 )
 
 func readComposerLockFile(filePath string) (*composerLockFile, error) {

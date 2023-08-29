@@ -1,9 +1,9 @@
 package update
 
 import (
-	"github.com/1franck/cvepack/internal"
-	"github.com/1franck/cvepack/internal/config"
-	"github.com/1franck/cvepack/internal/update"
+	"cvepack/internal"
+	"cvepack/internal/config"
+	"cvepack/internal/update"
 	"github.com/h2non/gock"
 	"net/http"
 	"strings"

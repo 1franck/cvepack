@@ -1,9 +1,9 @@
 package core
 
 import (
+	"cvepack/internal/osv"
+	"cvepack/internal/sqlite"
 	"database/sql"
-	"github.com/1franck/cvepack/internal/osv"
-	"github.com/1franck/cvepack/internal/sqlite"
 	"log"
 )
 

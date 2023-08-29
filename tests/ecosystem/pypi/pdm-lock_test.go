@@ -1,7 +1,7 @@
 package pypi
 
 import (
-	"github.com/1franck/cvepack/internal/ecosystem/pypi"
+	"cvepack/internal/ecosystem/pypi"
 	"testing"
 )
 

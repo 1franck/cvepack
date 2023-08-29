@@ -3,10 +3,10 @@ package update
 import (
 	"archive/zip"
 	"bufio"
+	"cvepack/internal"
+	"cvepack/internal/common"
+	"cvepack/internal/config"
 	"fmt"
-	"github.com/1franck/cvepack/internal"
-	"github.com/1franck/cvepack/internal/common"
-	"github.com/1franck/cvepack/internal/config"
 	"io"
 	"net/http"
 	"os"

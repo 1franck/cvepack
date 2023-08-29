@@ -1,8 +1,8 @@
 package golang
 
 import (
-	"github.com/1franck/cvepack/internal/common"
-	"github.com/1franck/cvepack/internal/ecosystem"
+	"cvepack/internal/common"
+	"cvepack/internal/ecosystem"
 	"log"
 	"path/filepath"
 	"strings"

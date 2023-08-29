@@ -1,7 +1,7 @@
 package cratesio
 
 import (
-	"github.com/1franck/cvepack/internal/common"
+	"cvepack/internal/common"
 	"path/filepath"
 )
 

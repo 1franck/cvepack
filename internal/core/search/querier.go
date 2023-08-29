@@ -1,9 +1,9 @@
 package search
 
 import (
+	"cvepack/internal/core"
 	"database/sql"
 	"fmt"
-	"github.com/1franck/cvepack/internal/core"
 	"log"
 )
 

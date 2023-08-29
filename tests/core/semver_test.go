@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/1franck/cvepack/internal/core"
+	"cvepack/internal/core"
 	"testing"
 )
 

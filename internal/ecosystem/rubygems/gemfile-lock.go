@@ -1,9 +1,9 @@
 package rubygems
 
 import (
+	"cvepack/internal/common"
+	"cvepack/internal/ecosystem"
 	"fmt"
-	"github.com/1franck/cvepack/internal/common"
-	"github.com/1franck/cvepack/internal/ecosystem"
 	"log"
 	"path/filepath"
 	"regexp"
