@@ -19,13 +19,14 @@ type gemFilePackage struct {
 
 func NewProjectFromGemFileLock(path string) ecosystem.Project {
 	pkgs := ecosystem.Packages{}
-	gemLockContent, err := common.ReadAllFile(filepath.Join(path, GemFileLock))
+	file := filepath.Join(path, GemFileLock)
+	gemLockContent, err := common.ReadAllFile(file)
 	if err != nil {
 		log.Println(err)
 		return ecosystem.NewProject(path, EcosystemName, pkgs)
 	}
 
-	lines := strings.Split(string(gemLockContent), "\n")
+	lines := strings.Split(string(gemLockContent), common.DetectLineEnding(file))
 	specsSection := false
 
 	for _, line := range lines {

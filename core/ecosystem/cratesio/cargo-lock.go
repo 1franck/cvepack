@@ -18,7 +18,7 @@ func NewProjectFromCargoLock(path string) ecosystem.Project {
 		return ecosystem.NewProject(path, EcosystemName, pkgs)
 	}
 
-	lines := strings.Split(string(cargoLockContent), "\n")
+	lines := strings.Split(string(cargoLockContent), common.DetectLineEnding(file))
 
 	for i, line := range lines {
 		if line == "[[package]]" {

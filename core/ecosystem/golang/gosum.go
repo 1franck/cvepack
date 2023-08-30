@@ -10,13 +10,14 @@ import (
 
 func NewProjectFromGoSum(path string) ecosystem.Project {
 	pkgs := ecosystem.Packages{}
-	goSumContent, err := common.ReadAllFile(filepath.Join(path, "go.sum"))
+	file := filepath.Join(path, "go.sum")
+	goSumContent, err := common.ReadAllFile(file)
 	if err != nil {
 		log.Println(err)
 		return ecosystem.NewProject(path, EcosystemName, pkgs)
 	}
 
-	lines := strings.Split(string(goSumContent), "\n")
+	lines := strings.Split(string(goSumContent), common.DetectLineEnding(file))
 
 	for _, line := range lines {
 		if line == "" {

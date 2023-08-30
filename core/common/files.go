@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 func FileExists(path string) bool {
@@ -69,4 +70,17 @@ func ReadAllFile(filePath string) ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func DetectLineEnding(filePath string) string {
+	content, err := ReadAllFile(filePath)
+	if err != nil {
+		return "\n"
+	}
+
+	if strings.Contains(string(content), "\r\n") {
+		return "\r\n"
+	}
+
+	return "\n"
 }

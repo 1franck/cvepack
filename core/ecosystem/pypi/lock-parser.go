@@ -1,13 +1,22 @@
 package pypi
 
 import (
+	"cvepack/core/common"
 	"cvepack/core/ecosystem"
 	"strings"
 )
 
-func parseLockContent(content []byte) ecosystem.Packages {
+func parseLockContent(file string) (ecosystem.Packages, error) {
 	pkgs := ecosystem.Packages{}
-	lines := strings.Split(string(content), "\n")
+
+	lockContent, err := common.ReadAllFile(file)
+
+	if err != nil {
+		return pkgs, err
+	}
+
+	lineEnding := common.DetectLineEnding(file)
+	lines := strings.Split(string(lockContent), lineEnding)
 
 	for i, line := range lines {
 		if line == "[[package]]" {
@@ -16,5 +25,6 @@ func parseLockContent(content []byte) ecosystem.Packages {
 			pkgs = append(pkgs, ecosystem.NewDefaultPackage(name, strings.TrimSpace(version), ""))
 		}
 	}
-	return pkgs
+
+	return pkgs, nil
 }

@@ -3,3 +3,5 @@ build
 bin
 .idea
 advisories.db
+cvepack-database-main
+cvepack-database-test-main

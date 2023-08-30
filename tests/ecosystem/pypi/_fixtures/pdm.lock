@@ -829,8 +829,8 @@ files = [
 ]
 
 [[package]]
-name = "tomli"
-version = "2.0.1"
+name = "urllib3"
+version = "1.0.4"
 requires_python = ">=3.7"
 summary = "A lil' TOML parser"
 files = [

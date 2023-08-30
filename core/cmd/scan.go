@@ -110,6 +110,7 @@ func scanPath(path string, db *sql.DB) {
 					for _, vul := range result.Vulnerabilities {
 						fmt.Printf("    (%s) %s\n", vul.VulnerabilityId, vul.Summary)
 					}
+					fmt.Println()
 				}
 			}
 		}
