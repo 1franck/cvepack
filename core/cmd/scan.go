@@ -62,7 +62,7 @@ func scanPath(path string, db *sql.DB) {
 	pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
 	for _, project := range scanJob.Projects {
-		fmt.Printf(" [%s] %d package(s) analyzed, ", project.Ecosystem(), len(project.Packages()))
+		fmt.Printf(" [%s] %d package(s) found, ", project.Ecosystem(), len(project.Packages()))
 		pkgsVul := scan.Results{}
 		for _, pkg := range project.Packages() {
 			vulnerabilities, err := pkgVulQuerier.Query(project.Ecosystem(), pkg.Name(), pkg.Version())
@@ -88,7 +88,7 @@ func scanPath(path string, db *sql.DB) {
 			problemsWord += "s"
 		}
 
-		fmt.Printf("%d %s found:\n", packageAffectedCount, problemsWord)
+		fmt.Printf("%d %s detected:\n", packageAffectedCount, problemsWord)
 
 		printedDep := make(map[string]bool)
 		longestPackageName := pkgsVul.LongestPackageName() + 5

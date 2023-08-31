@@ -54,9 +54,20 @@ var SearchCmd = &cobra.Command{
 				versionLastAffected = *result.VersionLastAffected
 			}
 
-			fmt.Printf("\n[%s - %s]\n Introduced: %s, Fixed: %s, Last Affected: %s\n Ecosystem: %s, Ref: %s\n Summary: %s\n",
+			tag := fmt.Sprintf(
+				"[%s - %s]",
 				packageColor.Sprint(result.AliasesToString()),
 				colorizeSeverityLevel(result.SeverityLevel()),
+			)
+			if result.AliasesToString() == "" {
+				tag = fmt.Sprintf(
+					"[%s]",
+					colorizeSeverityLevel(result.SeverityLevel()),
+				)
+			}
+
+			fmt.Printf("\n%s\n Introduced: %s, Fixed: %s, Last Affected: %s\n Ecosystem: %s, Ref: %s\n Summary: %s\n",
+				tag,
 				result.VersionIntroduced,
 				versionFixed,
 				versionLastAffected,
