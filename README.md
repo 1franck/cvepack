@@ -15,7 +15,7 @@ Be aware, this is a proof of concept and a work in progress.
 - [x] RubyGems (Ruby)
 - [x] PyPI (Python)
 - [x] NuGet (.Net)
-- [ ] Maven (Java)
+- [x] Maven (Java)
 
 ## Usage
 
