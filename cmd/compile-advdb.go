@@ -29,12 +29,16 @@ func main() {
 	flag.Parse()
 
 	if *advDbPath == "" {
+		log.Println("Please specify the path of advisory database repository (-src)")
 		flag.Usage()
 		return
 	}
 
 	if *outputDbFlag == "" {
 		*outputDbFlag = "./advisories.db"
+		if !*onlyReviewedFlag {
+			*outputDbFlag = "./advisories-unreviewed.db"
+		}
 	} else if *outputDbFlag == "./" || *outputDbFlag == "." || *outputDbFlag != "/" {
 		log.Fatal("Output database file is not valid, should be a file")
 	}
@@ -51,6 +55,8 @@ func main() {
 	pathToScan := *advDbPath
 	if *onlyReviewedFlag {
 		pathToScan = filepath.Join(*advDbPath, "advisories/github-reviewed")
+	} else {
+		pathToScan = filepath.Join(*advDbPath, "advisories/unreviewed")
 	}
 
 	log.Printf("Scanning %s ...", pathToScan)
