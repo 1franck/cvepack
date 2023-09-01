@@ -4,6 +4,7 @@ import (
 	"cvepack/core/ecosystem"
 	"cvepack/core/ecosystem/cratesio"
 	"cvepack/core/ecosystem/golang"
+	"cvepack/core/ecosystem/maven"
 	"cvepack/core/ecosystem/npm"
 	"cvepack/core/ecosystem/nuget"
 	"cvepack/core/ecosystem/packagist"
@@ -120,6 +121,17 @@ func (scan *Scan) Run() {
 			scan.Projects = append(scan.Projects, nuget.NewProjectFromSln(scan.Path, slnFile))
 			waitGroup.Done()
 		}()
+	}
+
+	if maven.DetectPomXml(scan.Path) {
+		if maven.DetectPomXml(scan.Path) {
+			scan.Log("pom.xml detected!")
+			waitGroup.Add(1)
+			go func() {
+				scan.Projects = append(scan.Projects, maven.NewProjectFromPomXml(scan.Path))
+				waitGroup.Done()
+			}()
+		}
 	}
 
 	waitGroup.Wait()
