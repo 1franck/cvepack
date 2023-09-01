@@ -5,6 +5,7 @@ import (
 	"cvepack/core/ecosystem/cratesio"
 	"cvepack/core/ecosystem/golang"
 	"cvepack/core/ecosystem/npm"
+	"cvepack/core/ecosystem/nuget"
 	"cvepack/core/ecosystem/packagist"
 	"cvepack/core/ecosystem/pypi"
 	"cvepack/core/ecosystem/rubygems"
@@ -109,6 +110,16 @@ func (scan *Scan) Run() {
 				waitGroup.Done()
 			}()
 		}
+	}
+
+	slnFile := nuget.DetectSln(scan.Path)
+	if slnFile != "" {
+		scan.Log("Sln file detected!")
+		waitGroup.Add(1)
+		go func() {
+			scan.Projects = append(scan.Projects, nuget.NewProjectFromSln(scan.Path, slnFile))
+			waitGroup.Done()
+		}()
 	}
 
 	waitGroup.Wait()

@@ -14,7 +14,7 @@ Be aware, this is a proof of concept and a work in progress.
 - [x] Crates.io (Rust)
 - [x] RubyGems (Ruby)
 - [x] PyPI (Python)
-- [ ] NuGet (.Net)
+- [x] NuGet (.Net)
 
 ## Usage
 

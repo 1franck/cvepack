@@ -6,6 +6,7 @@
 - Fix crates.io version parsing
 - Add RubyGems package detection
 - Add PyPI package detection
+- Add NuGet package detection
 
 # 0.2.0
 

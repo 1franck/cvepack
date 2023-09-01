@@ -6,8 +6,6 @@ type Package interface {
 	Parent() string
 }
 
-type Packages []Package
-
 type defaultPackage struct {
 	name    string
 	version string
@@ -28,4 +26,10 @@ func (pkg *defaultPackage) Version() string {
 
 func (pkg *defaultPackage) Parent() string {
 	return pkg.parent
+}
+
+type Packages []Package
+
+func (pkgs *Packages) Append(packages ...Package) {
+	*pkgs = append(*pkgs, packages...)
 }
