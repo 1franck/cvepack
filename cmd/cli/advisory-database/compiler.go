@@ -1,3 +1,5 @@
+// CVEPACK - advdb-compiler
+// compile latest change of https://github.com/github/advisory-database.git into an sqlite database
 package main
 
 import (

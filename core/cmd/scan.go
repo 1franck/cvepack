@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"strings"
+	"time"
 )
 
 var showDetails bool
@@ -40,7 +41,7 @@ var ScanCommand = &cobra.Command{
 		}
 
 		for _, path := range args {
-			fmt.Printf("Scanning %s ..\n", path)
+			fmt.Printf("Scanning %s ... at %s\n", path, time.Now().Format("2006-01-02 15:04:05"))
 			if err := common.ValidateDirectory(path); err != nil {
 				fmt.Printf("path %s not found\n", path)
 				return
@@ -95,6 +96,11 @@ func scanPath(path string, db *sql.DB) {
 		for _, result := range pkgsVul {
 			if _, ok := printedDep[result.Query.ToString()]; !ok {
 
+				aliases := infoColor.Sprint(result.Vulnerabilities.AliasesSummary())
+				if showDetails {
+					aliases = ""
+				}
+
 				fmt.Printf("  [%s%s%s] %s %s %s %s\n",
 					packageColor.Sprint(result.Query.Name),
 					infoColor.Sprintf("@"),
@@ -102,13 +108,25 @@ func scanPath(path string, db *sql.DB) {
 					strings.Repeat(".", longestPackageName-result.Query.StringLen()),
 					colorizeSeveritySummary(result.Vulnerabilities),
 					strings.Repeat(".", 35-len(result.Vulnerabilities.SeveritiesSummary())),
-					infoColor.Sprint(result.Vulnerabilities.AliasesSummary()))
+					aliases)
 
 				printedDep[result.Query.ToString()] = true
 
 				if showDetails {
 					for _, vul := range result.Vulnerabilities {
-						fmt.Printf("    (%s) %s\n", vul.VulnerabilityId, vul.Summary)
+						alias := vul.VulnerabilityId
+						if len(vul.AliasesParsed()) > 0 {
+							alias = vul.AliasesToString()
+						}
+						if len(alias) < 20 {
+							alias += strings.Repeat(" ", 20-len(alias))
+						}
+
+						hasFix := "no fix"
+						if vul.VersionFixed != nil && strings.TrimSpace(*vul.VersionFixed) != "" {
+							hasFix = "fixed in v" + *vul.VersionFixed
+						}
+						fmt.Printf("    | %s| %s [%s]\n", alias, vul.Summary, hasFix)
 					}
 					fmt.Println()
 				}

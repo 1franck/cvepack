@@ -1,7 +1,8 @@
-tmp
-build
-bin
-.idea
+/.idea
+/bin
+/build
+/cvepack-database-main
+/cvepack-database-test-main
+/tmp
 advisories.db
-cvepack-database-main
-cvepack-database-test-main
+advisories.db-journal

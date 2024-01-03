@@ -1,6 +1,9 @@
 # 0.4.0
 
 - Add Maven package detection
+- Scan details show fixed-in version
+- Refactored advisory database uploader
+- Reorganized cmd binaries
 
 # 0.3.0
 
