@@ -30,8 +30,8 @@ func main() {
 	start := common.TimerStart()
 
 	advDbFilePath := flag.String("src", "", "Filepath of advisory database")
-	compiledAdvRepoPath := flag.String("dst", "", "Path of compiled advisory database repository")
-	simulation := flag.Bool("simulation", false, "Simulation mode (no gitCommit, no push) [default: false]")
+	compiledAdvRepoPath := flag.String("dst", "", "Path of \"cvepack-database\" repository")
+	simulation := flag.Bool("simulation", false, "Simulation mode (no git commit/push) [default: false]")
 
 	flag.Parse()
 
@@ -78,16 +78,18 @@ func main() {
 	}
 
 	// Write the new checksum to db.checksum
-	err = writeChecksum(*compiledAdvRepoPath, cs)
+	err = updateChecksum(*compiledAdvRepoPath, cs)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Copy db to repo
-	err = common.CopyFile(*advDbFilePath, filepath.Join(*compiledAdvRepoPath, "advisories.db"))
-	if err != nil {
-		log.Fatal("Error copying file:", err)
-		return
+	if *advDbFilePath != filepath.Join(*compiledAdvRepoPath, "advisories.db") {
+		err = common.CopyFile(*advDbFilePath, filepath.Join(*compiledAdvRepoPath, "advisories.db"))
+		if err != nil {
+			log.Fatal("Error copying file:", err)
+			return
+		}
 	}
 
 	// Update README.md
@@ -120,6 +122,7 @@ func main() {
 	common.PrintTimer(start)
 }
 
+// check if dst checksum is equal to src checksum
 func isChecksumEqual(path string, checksum string) (bool, error) {
 	oldChecksumFile, err := os.Open(filepath.Join(path, "db.checksum"))
 	if err != nil {
@@ -140,7 +143,8 @@ func isChecksumEqual(path string, checksum string) (bool, error) {
 	return string(oldChecksum) == checksum, nil
 }
 
-func writeChecksum(path string, checksum string) error {
+// update dst checksum
+func updateChecksum(path string, checksum string) error {
 	checksumFile := filepath.Join(path, "db.checksum")
 	err := os.WriteFile(checksumFile, []byte(checksum), 0644)
 	if err != nil {
@@ -149,6 +153,7 @@ func writeChecksum(path string, checksum string) error {
 	return nil
 }
 
+// update dst README.md
 func updateReadme(path string) error {
 	readmeContent := strings.ReplaceAll(readmeTpl, "{{ last_update }}", time.Now().Format("2006-01-02 15:04:05"))
 	err := os.WriteFile(filepath.Join(path, "README.md"), []byte(readmeContent), 0644)
@@ -158,6 +163,7 @@ func updateReadme(path string) error {
 	return nil
 }
 
+// stage all dst modified files
 func stageAllModified(path string) (string, error) {
 	result, err := git.StageAllModified(path)
 	if err != nil {
@@ -166,6 +172,7 @@ func stageAllModified(path string) (string, error) {
 	return result, nil
 }
 
+// gitCommit dst with a message
 func gitCommit(path string, message string) (string, error) {
 	result, err := git.Commit(path, message)
 	if err != nil {
@@ -174,6 +181,7 @@ func gitCommit(path string, message string) (string, error) {
 	return result, nil
 }
 
+// gitPush dst repo
 func gitPush(path string, remote string, branch string) (string, error) {
 	result, err := git.Push(path, remote, branch)
 	if err != nil {
