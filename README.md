@@ -22,7 +22,7 @@ Be aware, this is a proof of concept and a work in progress.
 #### Scan folder(s)
 
 ```bash
-cvepack scan <folder path> [<folder path> ...]
+cvepack scan [-d|--details] <folder path> [<folder path> ...]
 ```
 
 #### Search a package

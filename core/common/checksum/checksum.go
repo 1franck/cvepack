@@ -13,7 +13,12 @@ func FromFile(filepath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
 
 	// Create a new SHA-256 hash
 	hash := sha256.New()
