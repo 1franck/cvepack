@@ -25,11 +25,15 @@ Be aware, this is a proof of concept and a work in progress.
 cvepack scan [-d|--details] <folder path> [<folder path> ...]
 ```
 
+![scan_cmd.png](./screenshots/scan_cmd.png)
+
 #### Search a package
 
 ```bash
 cvepack search <package name>
 ```
+
+![search_cmd.png](./screenshots/search_cmd.png)
 
 #### Update CVE database
 
