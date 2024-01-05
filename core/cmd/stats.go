@@ -16,7 +16,7 @@ var StatsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cli.PrintNameWithVersionHeader()
 
-		db, closeDb := database.Connect()
+		db, closeDb := database.ConnectToDefault()
 		defer closeDb(db)
 
 		total := stats.GetTotalVulnerabilities(db)

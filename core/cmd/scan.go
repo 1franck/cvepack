@@ -27,7 +27,7 @@ var ScanCommand = &cobra.Command{
 			UpdateDatabase()
 		}
 
-		db, closeDb := database.Connect()
+		db, closeDb := database.ConnectToDefault()
 		defer closeDb(db)
 
 		for _, path := range args {

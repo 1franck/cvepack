@@ -7,8 +7,8 @@ import (
 	"log"
 )
 
-func Connect() (db *sql.DB, closeDb func(db *sql.DB)) {
-	db, err := sqlite.Connect(config.Default.DatabaseFilePath())
+func Connect(dbFile string) (db *sql.DB, closeDb func(db *sql.DB)) {
+	db, err := sqlite.Connect(dbFile)
 	if err != nil {
 		log.Printf("error while connecting to database: %s", err)
 		log.Fatal(err)
@@ -20,4 +20,8 @@ func Connect() (db *sql.DB, closeDb func(db *sql.DB)) {
 			log.Fatal(err)
 		}
 	}
+}
+
+func ConnectToDefault() (db *sql.DB, closeDb func(db *sql.DB)) {
+	return Connect(config.Default.DatabaseFilePath())
 }

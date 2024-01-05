@@ -16,7 +16,7 @@ var SearchCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("%s v%s\n", config.Default.Name, config.Default.Version)
 
-		db, closeDb := database.Connect()
+		db, closeDb := database.ConnectToDefault()
 		defer closeDb(db)
 
 		querier := search.LookupPackageQuerier(db)
