@@ -1,5 +1,6 @@
 package nuget
 
 const (
-	EcosystemName = "NuGet"
+	EcosystemLanguage = ".Net"
+	EcosystemName     = "NuGet"
 )

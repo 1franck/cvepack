@@ -1,7 +1,8 @@
 package rubygems
 
 const (
-	EcosystemName = "RubyGems"
-	GemFile       = "Gemfile"
-	GemFileLock   = "Gemfile.lock"
+	EcosystemLanguage = "Ruby"
+	EcosystemName     = "RubyGems"
+	GemFile           = "Gemfile"
+	GemFileLock       = "Gemfile.lock"
 )

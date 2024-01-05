@@ -17,6 +17,16 @@ func CountVulnerabilities(db *sql.DB) (int, error) {
 	return count, nil
 }
 
+func CountVulnerabilitiesByEcosystem(db *sql.DB, ecosystem string) (int, error) {
+	var count int
+	err := db.QueryRow(countVulnerabilityByEcosystemQuery, ecosystem).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func InsertVulnerability(db *sql.DB, v osv.Osv) error {
 
 	tx, err := db.Begin()

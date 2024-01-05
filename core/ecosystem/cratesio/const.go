@@ -1,7 +1,8 @@
 package cratesio
 
 const (
-	EcosystemName = "crates.io"
-	CargoFile     = "Cargo.toml"
-	CargoLockFile = "Cargo.lock"
+	EcosystemLanguage = "Rust"
+	EcosystemName     = "crates.io"
+	CargoFile         = "Cargo.toml"
+	CargoLockFile     = "Cargo.lock"
 )

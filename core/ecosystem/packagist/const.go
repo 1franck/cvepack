@@ -1,7 +1,8 @@
 package packagist
 
 const (
-	EcosystemName    = "Packagist"
-	ComposerFile     = "composer.json"
-	ComposerLockFile = "composer.lock"
+	EcosystemLanguage = "PHP"
+	EcosystemName     = "Packagist"
+	ComposerFile      = "composer.json"
+	ComposerLockFile  = "composer.lock"
 )

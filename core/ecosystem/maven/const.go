@@ -1,6 +1,7 @@
 package maven
 
 const (
-	EcosystemName = "Maven"
-	PomXml        = "pom.xml"
+	EcosystemLanguage = "Java"
+	EcosystemName     = "Maven"
+	PomXml            = "pom.xml"
 )

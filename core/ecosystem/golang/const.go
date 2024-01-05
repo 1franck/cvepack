@@ -1,7 +1,8 @@
 package golang
 
 const (
-	EcosystemName = "Go"
-	GoMod         = "go.mod"
-	GoSum         = "go.sum"
+	EcosystemLanguage = "Go"
+	EcosystemName     = "Go"
+	GoMod             = "go.mod"
+	GoSum             = "go.sum"
 )

@@ -10,13 +10,14 @@ DB_COMPILER_BIN = compiler
 DB_UPLOADER_CMD = ./cmd/cli/advisory-database/uploader.go
 DB_UPLOADER_BIN = uploader
 
+# GO ENV & FLAGS
 GO_ENV_DARWIN_64 = GOARCH=amd64 GOOS=darwin
 GO_ENV_LINUX_64 = GOARCH=amd64 GOOS=linux
 GO_ENV_WIN_64 = GOARCH=amd64 GOOS=windows
 GO_ENV_ARM_64 = GOARCH=arm64 GOOS=linux GOARM=7
-
 GO_PROD_FLAGS = -ldflags "-s -w"
 
+# cvepack version
 VERSION = $(shell grep -oE 'VERSION = "[^"]+"' internal/const.go | cut -d'"' -f2)
 
 RUN_OS_BIN =
@@ -72,6 +73,7 @@ clean:
 	rm ./bin/darwin/cli/tools/$(DB_UPLOADER_BIN)
 	rm ./bin/linux/cli/tools/$(DB_UPLOADER_BIN)
 	rm ./bin/win/cli/tools/$(DB_UPLOADER_BIN).exe
+	rm ./bin/arm/cli/tools/$(DB_UPLOADER_BIN)
 
 version:
 	@echo $(VERSION)

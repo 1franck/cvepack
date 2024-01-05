@@ -11,6 +11,7 @@ func main() {
 	cmd.RootCmd.AddCommand(cmd.UpdateCmd)
 	cmd.RootCmd.AddCommand(cmd.ScanCommand)
 	cmd.RootCmd.AddCommand(cmd.SearchCmd)
+	cmd.RootCmd.AddCommand(cmd.StatsCmd)
 
 	err := cmd.RootCmd.Execute()
 	if err != nil {

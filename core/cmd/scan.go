@@ -3,9 +3,9 @@ package cmd
 import (
 	"cvepack/core/common"
 	"cvepack/core/config"
+	"cvepack/core/database"
 	"cvepack/core/scan"
 	"cvepack/core/search"
-	"cvepack/core/sqlite"
 	"database/sql"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -27,18 +27,8 @@ var ScanCommand = &cobra.Command{
 			UpdateDatabase()
 		}
 
-		db, err := sqlite.Connect(config.Default.DatabaseFilePath())
-		defer func(db *sql.DB) {
-			err := db.Close()
-			if err != nil {
-				log.Printf("error while closing database: %s", err)
-				log.Fatal(err)
-			}
-		}(db)
-		if err != nil {
-			log.Printf("error while connecting to database: %s", err)
-			log.Fatal(err)
-		}
+		db, closeDb := database.Connect()
+		defer closeDb(db)
 
 		for _, path := range args {
 			fmt.Printf("Scanning %s ... at %s\n", path, time.Now().Format("2006-01-02 15:04:05"))

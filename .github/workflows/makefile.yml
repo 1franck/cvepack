@@ -23,4 +23,4 @@ jobs:
       run: make tests
 
     - name: build
-      run: make build-gh
+      run: make && make build-tools

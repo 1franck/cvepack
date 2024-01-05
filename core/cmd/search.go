@@ -2,9 +2,8 @@ package cmd
 
 import (
 	"cvepack/core/config"
+	"cvepack/core/database"
 	"cvepack/core/search"
-	"cvepack/core/sqlite"
-	"database/sql"
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
@@ -17,18 +16,8 @@ var SearchCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("%s v%s\n", config.Default.Name, config.Default.Version)
 
-		db, err := sqlite.Connect(config.Default.DatabaseFilePath())
-		defer func(db *sql.DB) {
-			err := db.Close()
-			if err != nil {
-				log.Printf("error while closing database: %s", err)
-				log.Fatal(err)
-			}
-		}(db)
-		if err != nil {
-			log.Printf("error while connecting to database: %s", err)
-			log.Fatal(err)
-		}
+		db, closeDb := database.Connect()
+		defer closeDb(db)
 
 		querier := search.LookupPackageQuerier(db)
 		results, err := querier.Query(args[0], "")

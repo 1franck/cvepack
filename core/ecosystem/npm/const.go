@@ -1,6 +1,7 @@
 package npm
 
 const (
+	EcosystemLanguage = "NodeJS"
 	EcosystemName     = "npm"
 	PackageFile       = "package.json"
 	PackageLockFile   = "package-lock.json"

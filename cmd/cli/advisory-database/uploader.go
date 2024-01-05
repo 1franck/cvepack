@@ -181,7 +181,7 @@ func gitCommit(path string, message string) (string, error) {
 	return result, nil
 }
 
-// gitPush dst repo
+// gitPush dst repo / use current user git credentials & config
 func gitPush(path string, remote string, branch string) (string, error) {
 	result, err := git.Push(path, remote, branch)
 	if err != nil {

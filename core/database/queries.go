@@ -13,7 +13,11 @@ var insertVulnerabilityQuery = `
 `
 
 var countVulnerabilityQuery = `
-    SELECT COUNT(*) FROM vulnerabilities
+    SELECT COUNT(id) FROM vulnerabilities
+`
+
+var countVulnerabilityByEcosystemQuery = `
+    SELECT COUNT(id) FROM affected WHERE package_ecosystem = ?
 `
 
 var insertAffectedQuery = `

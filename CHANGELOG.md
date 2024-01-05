@@ -4,6 +4,7 @@
 - Scan details show fixed-in version
 - Refactored advisory database uploader
 - Reorganized cmd binaries
+- Add stats subcommand
 
 # 0.3.0
 
