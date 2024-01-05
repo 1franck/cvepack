@@ -32,6 +32,7 @@ func main() {
 	advDbFilePath := flag.String("src", "", "Filepath of advisory database")
 	compiledAdvRepoPath := flag.String("dst", "", "Path of \"cvepack-database\" repository")
 	simulation := flag.Bool("simulation", false, "Simulation mode (no git commit/push) [default: false]")
+	force := flag.Bool("force", false, "Force update (ignore checksum) [default: false]")
 
 	flag.Parse()
 
@@ -67,7 +68,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if checksumIsEqual {
+	if !*force && checksumIsEqual {
 		log.Println("Checksums are equal, no need to update")
 		return
 	}
@@ -83,8 +84,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	absAdvDbFilePath, err := filepath.Abs(*advDbFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	absCompiledAdvRepoPath, err := filepath.Abs(filepath.Join(*compiledAdvRepoPath, "advisories.db"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Copy db to repo
-	if *advDbFilePath != filepath.Join(*compiledAdvRepoPath, "advisories.db") {
+	if absAdvDbFilePath != absCompiledAdvRepoPath {
 		err = common.CopyFile(*advDbFilePath, filepath.Join(*compiledAdvRepoPath, "advisories.db"))
 		if err != nil {
 			log.Fatal("Error copying file:", err)
