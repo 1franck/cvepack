@@ -1,10 +1,8 @@
 # :space_invader: CVEPack
 
-CVEPack is a tool to detect vulnerabilities in packages. 
+CVEPack is a tool to detect automatically vulnerabilities in packages from various ecosystems. 
 
-It uses [GitHub Advisory Database](https://github.com/github/advisory-database) as source for detecting CVEs.
-
-Be aware, this is a proof of concept and a work in progress.
+It uses a [compiled](https://github.com/1franck/cvepack-database) version of [GitHub Advisory Database](https://github.com/github/advisory-database) as source for detecting CVEs.
 
 #### Ecosystems supported
 
