@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"cvepack/core/cli"
+	"cvepack/core/config"
 	"cvepack/core/database"
 	"cvepack/core/stats"
 	"fmt"
@@ -41,5 +42,11 @@ var StatsCmd = &cobra.Command{
 
 		cli.PrintMap(ecosystemStatsFormatted, nil)
 
+		lastModified, err := database.LastModified(config.Default.DatabaseFilePath())
+		if err != nil {
+			log.Fatalf("error while getting database last modified time: %s", err)
+		}
+
+		cli.PrintWithUpperLine(fmt.Sprintf("Last update: %s", lastModified))
 	},
 }

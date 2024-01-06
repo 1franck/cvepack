@@ -3,6 +3,8 @@ package database
 import (
 	"cvepack/core/sqlite"
 	"errors"
+	"os"
+	"time"
 )
 
 func IsDatabaseOk(dbPath string) error {
@@ -20,4 +22,13 @@ func IsDatabaseOk(dbPath string) error {
 		return errors.New("no vulnerabilities found in database :/")
 	}
 	return nil
+}
+
+func LastModified(dbPath string) (string, error) {
+	fileInfo, err := os.Stat(dbPath)
+	if err != nil {
+		return "", err
+	}
+	modTime := fileInfo.ModTime()
+	return modTime.Format(time.RFC1123), nil
 }

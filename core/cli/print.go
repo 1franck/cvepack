@@ -16,6 +16,11 @@ func PrintWithUnderline(text string) {
 	fmt.Println(strings.Repeat("=", len(text)))
 }
 
+func PrintWithUpperLine(text string) {
+	fmt.Println(strings.Repeat("=", len(text)))
+	fmt.Println(text)
+}
+
 func PrintMap(m map[string]string, keyValFormatter func(string, string) (string, string)) {
 	longestKey := 0
 	longestValue := 0 // no needed for now, maybe remove or use later with border
