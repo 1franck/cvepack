@@ -33,105 +33,56 @@ func (scan *Scan) Log(msg string) {
 func (scan *Scan) Run() {
 	waitGroup := sync.WaitGroup{}
 
-	if npm.DetectPackageJson(scan.Path) {
-		if npm.DetectPackageLockJson(scan.Path) {
-			scan.Log("package-lock.json detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, npm.NewProjectFromPackageLockJson(scan.Path))
-				waitGroup.Done()
-			}()
-		} else if npm.DetectNodeModules(scan.Path) {
-			scan.Log("node_modules detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, npm.NewProjectFromNodeModules(scan.Path))
-				waitGroup.Done()
-			}()
-		}
+	builders := make([]ecosystem.ProjectBuilder, 0)
+
+	npmProjectBuilder := npm.ProjectBuilder(scan.Path)
+	if npmProjectBuilder != nil {
+		builders = append(builders, *npmProjectBuilder)
 	}
 
-	if golang.DetectGoMod(scan.Path) {
-		if golang.DetectGoSum(scan.Path) {
-			scan.Log("go.sum detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, golang.NewProjectFromGoSum(scan.Path))
-				waitGroup.Done()
-			}()
-		}
+	golangProjectBuilder := golang.ProjectBuilder(scan.Path)
+	if golangProjectBuilder != nil {
+		builders = append(builders, *golangProjectBuilder)
 	}
 
-	if packagist.DetectComposerJson(scan.Path) {
-		if packagist.DetectComposerLock(scan.Path) {
-			scan.Log("composer.lock detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, packagist.NewProjectFromComposerLock(scan.Path))
-				waitGroup.Done()
-			}()
-		}
+	packagistProjectBuilder := packagist.ProjectBuilder(scan.Path)
+	if packagistProjectBuilder != nil {
+		builders = append(builders, *packagistProjectBuilder)
 	}
 
-	if cratesio.DetectCargoToml(scan.Path) {
-		if cratesio.DetectCargoLock(scan.Path) {
-			scan.Log("Cargo.lock detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, cratesio.NewProjectFromCargoLock(scan.Path))
-				waitGroup.Done()
-			}()
-		}
+	cratesioBuilder := cratesio.ProjectBuilder(scan.Path)
+	if cratesioBuilder != nil {
+		builders = append(builders, *cratesioBuilder)
 	}
 
-	if rubygems.DetectGemFile(scan.Path) {
-		if rubygems.DetectGemFileLock(scan.Path) {
-			scan.Log("Gemfile.lock detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, rubygems.NewProjectFromGemFileLock(scan.Path))
-				waitGroup.Done()
-			}()
-		}
+	rubygemsBuilder := rubygems.ProjectBuilder(scan.Path)
+	if rubygemsBuilder != nil {
+		builders = append(builders, *rubygemsBuilder)
 	}
 
-	if pypi.DetectPyProjectToml(scan.Path) {
-		if pypi.DetectPoetryLock(scan.Path) {
-			scan.Log("poetry.lock detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, pypi.NewProjectFromPoetryLock(scan.Path))
-				waitGroup.Done()
-			}()
-		} else if pypi.DetectPdmLock(scan.Path) {
-			scan.Log("pdm.lock detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, pypi.NewProjectFromPdmLock(scan.Path))
-				waitGroup.Done()
-			}()
-		}
+	pypiBuilder := pypi.ProjectBuilder(scan.Path)
+	if pypiBuilder != nil {
+		builders = append(builders, *pypiBuilder)
 	}
 
-	slnFile := nuget.DetectSln(scan.Path)
-	if slnFile != "" {
-		scan.Log("Sln file detected!")
+	nugetBuilder := nuget.ProjectBuilder(scan.Path)
+	if nugetBuilder != nil {
+		builders = append(builders, *nugetBuilder)
+	}
+
+	mavenBuilder := maven.ProjectBuilder(scan.Path)
+	if mavenBuilder != nil {
+		builders = append(builders, *mavenBuilder)
+	}
+
+	for _, builder := range builders {
 		waitGroup.Add(1)
+		b := builder
 		go func() {
-			scan.Projects = append(scan.Projects, nuget.NewProjectFromSln(scan.Path, slnFile))
+			scan.Log(b.Description)
+			scan.Projects = append(scan.Projects, b.Build(scan.Path))
 			waitGroup.Done()
 		}()
-	}
-
-	if maven.DetectPomXml(scan.Path) {
-		if maven.DetectPomXml(scan.Path) {
-			scan.Log("pom.xml detected!")
-			waitGroup.Add(1)
-			go func() {
-				scan.Projects = append(scan.Projects, maven.NewProjectFromPomXml(scan.Path))
-				waitGroup.Done()
-			}()
-		}
 	}
 
 	waitGroup.Wait()

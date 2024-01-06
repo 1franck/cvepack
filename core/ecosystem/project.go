@@ -27,3 +27,12 @@ func (p *defaultProject) Ecosystem() string {
 func (p *defaultProject) Packages() []Package {
 	return p.packages
 }
+
+type ProjectBuilder struct {
+	Build       func(path string) Project
+	Description string
+}
+
+func NewProjectBuilder(fn func(path string) Project, desc string) *ProjectBuilder {
+	return &ProjectBuilder{fn, desc}
+}
