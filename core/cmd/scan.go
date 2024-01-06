@@ -53,7 +53,11 @@ func scanPath(path string, db *sql.DB) {
 	pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
 	for _, project := range scanJob.Projects {
-		fmt.Printf(" [%s] %d package(s) found, ", project.Ecosystem(), len(project.Packages()))
+		packageText := "package"
+		if len(project.Packages()) > 1 {
+			packageText += "s"
+		}
+		fmt.Printf(" [%s] %d %s found, ", project.Ecosystem(), len(project.Packages()), packageText)
 		pkgsVul := scan.Results{}
 		for _, pkg := range project.Packages() {
 			vulnerabilities, err := pkgVulQuerier.Query(project.Ecosystem(), pkg.Name(), pkg.Version())

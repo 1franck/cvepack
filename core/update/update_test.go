@@ -3,7 +3,6 @@ package update
 import (
 	"cvepack/core"
 	"cvepack/core/config"
-	"cvepack/core/update"
 	"github.com/h2non/gock"
 	"net/http"
 	"strings"
@@ -49,13 +48,13 @@ func Test_Update_IsAvailable_HappyPath(t *testing.T) {
 		BodyString("6b466ca3ac976d32e380e072f461f7ac38ca528a788dbd37587965e93aa08e4d")
 
 	// create http server with one route
-	http.ListenAndServe("", nil)
+	http.ListenAndServe("127.0.0.1", nil)
 
 	conf := config.FromDefault(config.Config{
-		DatabaseRootDir: "./_fixtures",
+		DatabaseRootDir: "./testdata",
 	})
 
-	var updateAvailable, reason = update.IsAvailable(conf)
+	var updateAvailable, reason = IsAvailable(conf)
 	assertUpdateIsAvailable(t, IsNeededTestCase{
 		UpdateAvailable:         updateAvailable,
 		Reason:                  reason,
@@ -68,43 +67,43 @@ func Test_Update_IsAvailable_DbFolderNotFound(t *testing.T) {
 	conf := config.Config{
 		DatabaseRootDir: "./unknown_folder",
 	}
-	var updateAvailable, reason = update.IsAvailable(conf)
+	var updateAvailable, reason = IsAvailable(conf)
 
 	assertUpdateIsAvailable(t, IsNeededTestCase{
 		UpdateAvailable:         updateAvailable,
 		Reason:                  reason,
 		ExpectedUpdateAvailable: true,
-		ExpectedReason:          update.ErrorDatabaseFolderNotFound,
+		ExpectedReason:          ErrorDatabaseFolderNotFound,
 	})
 }
 
 func Test_Update_IsAvailable_DbFileNotFound(t *testing.T) {
 	conf := config.FromDefault(config.Config{
-		DatabaseRootDir:  "./_fixtures",
+		DatabaseRootDir:  "./testdata",
 		DatabaseFileName: "./unknown.db",
 	})
-	var updateAvailable, reason = update.IsAvailable(conf)
+	var updateAvailable, reason = IsAvailable(conf)
 
 	assertUpdateIsAvailable(t, IsNeededTestCase{
 		UpdateAvailable:         updateAvailable,
 		Reason:                  reason,
 		ExpectedUpdateAvailable: true,
-		ExpectedReason:          update.ErrorDatabaseFileNotFound,
+		ExpectedReason:          ErrorDatabaseFileNotFound,
 	})
 }
 
 func Test_Update_IsAvailable_DbChecksumFileNotFound(t *testing.T) {
 	conf := config.FromDefault(config.Config{
-		DatabaseRootDir:          "./_fixtures",
+		DatabaseRootDir:          "./testdata",
 		DatabaseChecksumFileName: "./unknown.checksum",
 	})
-	var updateAvailable, reason = update.IsAvailable(conf)
+	var updateAvailable, reason = IsAvailable(conf)
 
 	assertUpdateIsAvailable(t, IsNeededTestCase{
 		UpdateAvailable:         updateAvailable,
 		Reason:                  reason,
 		ExpectedUpdateAvailable: true,
-		ExpectedReason:          update.ErrorDatabaseChecksumFileNotFound,
+		ExpectedReason:          ErrorDatabaseChecksumFileNotFound,
 	})
 }
 
@@ -118,12 +117,12 @@ func Test_Update_IsAvailable_DatabaseServerChecksumFileInvalid(t *testing.T) {
 		BodyString("")
 
 	// create http server with one route
-	http.ListenAndServe("", nil)
+	http.ListenAndServe("127.0.0.1", nil)
 
 	conf := config.FromDefault(config.Config{
-		DatabaseRootDir: "./_fixtures",
+		DatabaseRootDir: "./testdata",
 	})
-	var updateAvailable, reason = update.IsAvailable(conf)
+	var updateAvailable, reason = IsAvailable(conf)
 
 	assertUpdateIsAvailable(t, IsNeededTestCase{
 		UpdateAvailable:         updateAvailable,
@@ -142,18 +141,18 @@ func Test_Update_IsAvailable_DatabaseServerChecksumMismatch(t *testing.T) {
 		BodyString("6b466ca3ac976d32e380e072f461f7ac38ca528a788dbd37587965e93aa08e4d")
 
 	// create http server with one route
-	http.ListenAndServe("", nil)
+	http.ListenAndServe("127.0.0.1", nil)
 
 	conf := config.FromDefault(config.Config{
-		DatabaseRootDir:          "./_fixtures",
+		DatabaseRootDir:          "./testdata",
 		DatabaseChecksumFileName: "db.checksum.wrong",
 	})
-	var updateAvailable, reason = update.IsAvailable(conf)
+	var updateAvailable, reason = IsAvailable(conf)
 
 	assertUpdateIsAvailable(t, IsNeededTestCase{
 		UpdateAvailable:         updateAvailable,
 		Reason:                  reason,
 		ExpectedUpdateAvailable: true,
-		ExpectedReason:          update.ErrorDatabaseChecksumMismatch,
+		ExpectedReason:          ErrorDatabaseChecksumMismatch,
 	})
 }

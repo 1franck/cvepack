@@ -1,12 +1,11 @@
 package packagist
 
 import (
-	"cvepack/core/ecosystem/packagist"
 	"testing"
 )
 
 func Test_BuildProjectFromComposerLock(t *testing.T) {
-	project := packagist.NewProjectFromComposerLock("./_fixtures")
+	project := NewProjectFromComposerLock("./testdata")
 	if project.Ecosystem() != "Packagist" {
 		t.Errorf("Expected project name to be 'Packagist', got %s", project.Ecosystem())
 	}

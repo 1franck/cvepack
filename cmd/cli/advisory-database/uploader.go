@@ -116,7 +116,7 @@ func main() {
 	log.Println(stageResult)
 
 	// Commit with a message
-	commitResult, err := gitCommit(*compiledAdvRepoPath, "Auto-gitCommit: Update database")
+	commitResult, err := gitCommit(*compiledAdvRepoPath, "Auto-commit: Update database")
 	if err != nil {
 		log.Fatal(err)
 	}

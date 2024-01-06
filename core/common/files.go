@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -35,15 +36,28 @@ func ValidateDirectory(path string) error {
 }
 
 func CopyFile(sourcePath, destinationPath string) error {
+	sourcePathAbs, err := filepath.Abs(sourcePath)
+	if err != nil {
+		return err
+	}
+	destinationPathAbs, err := filepath.Abs(destinationPath)
+	if err != nil {
+		return err
+	}
+
+	if sourcePathAbs == destinationPathAbs {
+		return errors.New(fmt.Sprintf("Source and destination path are the same: %s", sourcePathAbs))
+	}
+
 	// Open the source file
-	sourceFile, err := os.Open(sourcePath)
+	sourceFile, err := os.Open(sourcePathAbs)
 	if err != nil {
 		return err
 	}
 	defer sourceFile.Close()
 
 	// Create or overwrite the destination file
-	destinationFile, err := os.Create(destinationPath)
+	destinationFile, err := os.Create(destinationPathAbs)
 	if err != nil {
 		return err
 	}

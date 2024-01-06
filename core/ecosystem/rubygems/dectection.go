@@ -7,7 +7,6 @@ import (
 
 func DetectGemFile(path string) bool {
 	return common.FileExists(filepath.Join(path, GemFile))
-
 }
 
 func DetectGemFileLock(path string) bool {

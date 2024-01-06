@@ -1,12 +1,9 @@
 package npm
 
-import (
-	"cvepack/core/ecosystem/npm"
-	"testing"
-)
+import "testing"
 
 func Test_BuildFromPackageLockJson(t *testing.T) {
-	npmProject := npm.NewProjectFromPackageLockJson("./_fixtures")
+	npmProject := NewProjectFromPackageLockJson("./testdata")
 	if npmProject.Ecosystem() != "npm" {
 		t.Errorf("Expected project name to be 'npm', got %s", npmProject.Ecosystem())
 	}

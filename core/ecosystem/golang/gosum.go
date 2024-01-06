@@ -31,7 +31,7 @@ func NewProjectFromGoSum(path string) ecosystem.Project {
 
 		name := parts[0]
 		version := parts[1][1:]
-		pkgs = append(pkgs, ecosystem.NewDefaultPackage(name, version, ""))
+		pkgs.Append(ecosystem.NewDefaultPackage(name, version, ""))
 	}
 
 	return ecosystem.NewProject(path, EcosystemName, pkgs)
