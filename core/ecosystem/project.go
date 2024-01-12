@@ -1,23 +1,23 @@
 package ecosystem
 
 type Project interface {
-	Path() string
+	Source() string
 	Ecosystem() string
 	Packages() []Package
 }
 
 type defaultProject struct {
-	path      string
+	source    string
 	ecosystem string
 	packages  []Package
 }
 
-func NewProject(path, ecosystem string, packages []Package) *defaultProject {
-	return &defaultProject{path, ecosystem, packages}
+func NewProject(source, ecosystem string, packages []Package) *defaultProject {
+	return &defaultProject{source, ecosystem, packages}
 }
 
-func (p *defaultProject) Path() string {
-	return p.path
+func (p *defaultProject) Source() string {
+	return p.source
 }
 
 func (p *defaultProject) Ecosystem() string {
