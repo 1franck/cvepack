@@ -6,8 +6,8 @@ require (
 	github.com/axllent/semver v0.0.1
 	github.com/gookit/color v1.5.4
 	github.com/h2non/gock v1.2.0
-	github.com/spf13/cobra v1.7.0
-	modernc.org/sqlite v1.25.0
+	github.com/spf13/cobra v1.8.0
+	modernc.org/sqlite v1.28.0
 )
 
 require (
@@ -26,8 +26,8 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	modernc.org/cc/v3 v3.40.0 // indirect
 	modernc.org/ccgo/v3 v3.16.13 // indirect
-	modernc.org/libc v1.24.1 // indirect
-	modernc.org/mathutil v1.5.0 // indirect
-	modernc.org/memory v1.6.0 // indirect
+	modernc.org/libc v1.29.0 // indirect
+	modernc.org/mathutil v1.6.0 // indirect
+	modernc.org/memory v1.7.2 // indirect
 	modernc.org/opt v0.1.3 // indirect
 )
