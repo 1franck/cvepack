@@ -24,7 +24,7 @@ func main() {
 		log.Fatal("Git command not found, please install it")
 	}
 
-	advDbPath := flag.String("src", "", "Path of advisory database repository")
+	advDbPath := flag.String("src", "", "Source of advisory database repository")
 	onlyReviewedFlag := flag.Bool("only-reviewed", true, "Only scan reviewed advisories")
 	outputDbFlag := flag.String("output", "", "Output database file")
 
