@@ -3,7 +3,6 @@ package npm
 import "cvepack/core/ecosystem"
 
 func ProjectBuilder(path string) *ecosystem.ProjectBuilder {
-
 	if DetectPackageJson(path) {
 		if DetectPackageLockJson(path) {
 			return ecosystem.NewProjectBuilder(

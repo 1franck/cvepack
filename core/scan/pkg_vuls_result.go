@@ -5,14 +5,14 @@ import (
 	"cvepack/core/search"
 )
 
-type Results []*PackageVulnerabilitiesResult
+type PackagesVulnerabilitiesResult []*PackageVulnerabilitiesResult
 
 type PackageVulnerabilitiesResult struct {
 	Query           search.PackageVulnerabilityQuery
 	Vulnerabilities search.PackageVulnerabilities
 }
 
-func (result *Results) LongestPackageName() int {
+func (result *PackagesVulnerabilitiesResult) LongestPackageName() int {
 	var longest int
 	for _, value := range *result {
 		curLength := value.Query.StringLen()
@@ -23,7 +23,7 @@ func (result *Results) LongestPackageName() int {
 	return longest
 }
 
-func (result *Results) Append(pkg ecosystem.Package, vul search.PackageVulnerabilities) {
+func (result *PackagesVulnerabilitiesResult) Append(pkg ecosystem.Package, vul search.PackageVulnerabilities) {
 	*result = append(*result, &PackageVulnerabilitiesResult{
 		Query: search.PackageVulnerabilityQuery{
 			Name: pkg.Name(), Version: pkg.Version(), Parent: pkg.Parent(),
@@ -32,7 +32,7 @@ func (result *Results) Append(pkg ecosystem.Package, vul search.PackageVulnerabi
 	})
 }
 
-func (result *Results) UniqueResultCount() int {
+func (result *PackagesVulnerabilitiesResult) UniqueResultCount() int {
 	unique := make(map[string]bool)
 	for _, value := range *result {
 		unique[value.Query.ToString()] = true

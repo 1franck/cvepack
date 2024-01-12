@@ -1,3 +1,9 @@
+# 0.5.0
+
+- Add flag -u/--url to scan subcommand
+- Add flag -s/--silent to scan subcommand
+- Add github repository support for scan subcommand
+
 # 0.4.0
 
 - Add Maven package detection
