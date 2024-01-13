@@ -55,3 +55,32 @@ func Test_IsVersionInRange(T *testing.T) {
 		}
 	}
 }
+
+func Test_LatestVersion(T *testing.T) {
+	type scenario struct {
+		versions []string
+		expected string
+	}
+
+	scenarios := []scenario{
+		{
+			[]string{"1.0.0", "1.0.1", "1.0.2"},
+			"1.0.2",
+		},
+		{
+			[]string{"1.1.0", "1.0.1", "1.1.2", "1.0.2"},
+			"1.1.2",
+		},
+		{
+			[]string{"1.1.0", "1.0.1", "4.0.0", "1.1.2", "1.0.2", "2.0.2", "3.0", "3.0.1", "4.0.0a"},
+			"4.0.0",
+		},
+	}
+
+	for _, s := range scenarios {
+		result := LatestVersion(s.versions)
+		if result != s.expected {
+			T.Errorf("LatestVersion(%v) failed, expected %s, got %s", s.versions, s.expected, result)
+		}
+	}
+}

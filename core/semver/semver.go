@@ -17,3 +17,8 @@ func IsVersionInRange(ver string, minVer string, maxVer string) bool {
 	}
 	return false
 }
+
+func LatestVersion(versions []string) string {
+	versions = semver.SortMax(versions)
+	return versions[0]
+}
