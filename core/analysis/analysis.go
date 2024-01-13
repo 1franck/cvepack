@@ -2,7 +2,7 @@ package analysis
 
 import (
 	"cvepack/core/scan"
-	"github.com/axllent/semver"
+	"cvepack/core/semver"
 )
 
 func LongestPackageName(result *scan.PackagesVulnerabilitiesResult) int {
@@ -39,6 +39,5 @@ func VersionToUpdate(pkgVul *scan.PackageVulnerabilitiesResult) string {
 		return ""
 	}
 
-	versions = semver.SortMax(versions)
-	return versions[0]
+	return semver.LatestVersion(versions)
 }
