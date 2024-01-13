@@ -9,19 +9,19 @@ const (
 )
 
 type Source struct {
-	Name  string
+	Value string
 	_type SourceType
 }
 
-func NewSource(name string, sourceType SourceType) Source {
-	return Source{Name: name, _type: sourceType}
+func NewSource(value string, sourceType SourceType) Source {
+	return Source{Value: value, _type: sourceType}
 }
 
 func (s *Source) Type() SourceType {
 	return s._type
 }
 
-func normalizeSourceType(t string) SourceType {
+func StringToSourceType(t string) SourceType {
 	switch SourceType(t) {
 	case UrlSource:
 		return UrlSource

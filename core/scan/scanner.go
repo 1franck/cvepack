@@ -10,6 +10,7 @@ import (
 	"cvepack/core/ecosystem/packagist"
 	"cvepack/core/ecosystem/pypi"
 	"cvepack/core/ecosystem/rubygems"
+	"cvepack/core/scan/github"
 	"fmt"
 	"sync"
 )
@@ -40,8 +41,11 @@ func (s *scanner) Scan(source ecosystem.Source) *ScannerResult {
 	return scanResult
 }
 
+// scanPath scans a path for projects
+// this is a builders based approach
+// each builder is responsible for detecting and building a ecosystem project builder
 func (s *scanner) scanPath(source ecosystem.Source) []ecosystem.Project {
-	path := source.Name
+	path := source.Value
 	waitGroup := sync.WaitGroup{}
 	projects := make([]ecosystem.Project, 0)
 	builders := make([]ecosystem.ProjectBuilder, 0)
@@ -100,6 +104,11 @@ func (s *scanner) scanPath(source ecosystem.Source) []ecosystem.Project {
 }
 
 func (s *scanner) scanUrl(source ecosystem.Source) []ecosystem.Project {
-	fmt.Printf("Scanning url %s", source.Name)
-	return []ecosystem.Project{}
+	fmt.Printf("Scanning url %s", source.Value)
+	projects := make([]ecosystem.Project, 0)
+	if github.DetectGithubRepoUrl(source.Value) {
+		fmt.Printf("Detected GitHub repo")
+		return projects
+	}
+	return projects
 }
