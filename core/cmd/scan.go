@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	showDetails bool
-	url         bool
-	silent      bool
+	showDetailsFlag bool
+	urlFlag         bool
+	silentFlag      bool
 )
 
 var ScanCommand = &cobra.Command{
@@ -26,8 +26,9 @@ var ScanCommand = &cobra.Command{
 	Short: "Scan a folder",
 	Long:  "Scan a folder",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(config.Default.NameAndVersion())
-
+		if !silentFlag {
+			fmt.Println(config.Default.NameAndVersion())
+		}
 		if IsDatabaseUpdateAvailable() {
 			UpdateDatabase()
 		}
@@ -36,47 +37,54 @@ var ScanCommand = &cobra.Command{
 		defer closeDb(db)
 
 		for _, path := range args {
-			fmt.Printf("Scanning %s ...\n", path)
-			if err := common.ValidateDirectory(path); err != nil {
-				fmt.Printf("path %s not found\n", path)
-				return
-			}
 			scanPath(path, db)
 		}
 	},
 }
 
 func init() {
-	ScanCommand.Flags().BoolVarP(&showDetails, "details", "d", false, "show details")
-	ScanCommand.Flags().BoolVarP(&url, "url", "u", false, "url instead of path")
-	ScanCommand.Flags().BoolVarP(&silent, "silent", "s", false, "silent")
+	ScanCommand.Flags().BoolVarP(&showDetailsFlag, "details", "d", false, "show details")
+	ScanCommand.Flags().BoolVarP(&urlFlag, "url", "u", false, "url instead of path")
+	ScanCommand.Flags().BoolVarP(&silentFlag, "silent", "s", false, "silent")
 }
 
 func scanPath(path string, db *sql.DB) {
-	verbose := true
-	if silent {
+	var (
+		err        error
+		verbose    = true
+		sourceType = es.PathSource
+	)
+
+	if silentFlag {
 		verbose = false
 	}
 
-	sourceType := es.PathSource
-	if url {
+	if urlFlag {
 		sourceType = es.UrlSource
 	}
-
-	source := es.NewSource(path, sourceType)
-	scanResults := scan.Inspect(source)
 
 	_printf := func(format string, a ...interface{}) {
 		if verbose {
 			fmt.Printf(format, a...)
 		}
 	}
-
 	_println := func(a ...interface{}) {
 		if verbose {
 			fmt.Println(a...)
 		}
 	}
+
+	source := es.NewSource(path, sourceType)
+
+	err = es.ValidateSource(source)
+	if err != nil {
+		_println(err)
+		return
+	}
+
+	_printf("Scanning %s ...\n", path)
+
+	scanResults := scan.Inspect(source)
 
 	pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
@@ -122,7 +130,7 @@ func scanPath(path string, db *sql.DB) {
 				fmt.Printf("Version to update: %s\n", versionToUpdate)
 
 				aliases := infoColor.Sprint(result.Vulnerabilities.AliasesSummary())
-				if showDetails {
+				if showDetailsFlag {
 					aliases = ""
 				}
 
@@ -137,7 +145,7 @@ func scanPath(path string, db *sql.DB) {
 
 				printedDep[result.Query.ToString()] = true
 
-				if showDetails {
+				if showDetailsFlag {
 					for _, vul := range result.Vulnerabilities {
 						alias := vul.VulnerabilityId
 						if len(vul.AliasesParsed()) > 0 {

@@ -15,7 +15,7 @@ func parseLockContent(file string) (ecosystem.Packages, error) {
 		return pkgs, err
 	}
 
-	lineEnding := common.DetectLineEnding(file)
+	lineEnding := common.DetectFileLineEnding(file)
 	lines := strings.Split(string(lockContent), lineEnding)
 
 	for i, line := range lines {
@@ -27,4 +27,21 @@ func parseLockContent(file string) (ecosystem.Packages, error) {
 	}
 
 	return pkgs, nil
+}
+
+func parsePackagesLockContent(content string) ecosystem.Packages {
+	lineEnding := common.DetectStringLineEnding(content)
+	lines := strings.Split(content, lineEnding)
+	pkgs := ecosystem.Packages{}
+
+	for i, line := range lines {
+		if line == "[[package]]" {
+			name := strings.Replace(lines[i+1][7:], "\"", "", -1)
+			version := strings.Replace(lines[i+2][9:], "\"", "", -1)
+			pkgs = append(pkgs, ecosystem.NewDefaultPackage(name, strings.TrimSpace(version), ""))
+		}
+	}
+
+	return pkgs
+
 }

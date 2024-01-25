@@ -16,3 +16,11 @@ func Plural(count int, singular, plural string) string {
 	}
 	return singular
 }
+
+func DetectStringLineEnding(content string) string {
+	if strings.Contains(content, "\r\n") {
+		return "\r\n"
+	}
+
+	return "\n"
+}

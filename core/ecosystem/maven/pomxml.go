@@ -3,10 +3,7 @@ package maven
 import (
 	"cvepack/core/ecosystem"
 	"encoding/xml"
-	"io"
 	"log"
-	"os"
-	"path/filepath"
 )
 
 type pomXml struct {
@@ -31,35 +28,10 @@ type pomXml struct {
 	} `xml:"dependencies"`
 }
 
-func NewProjectFromPomXml(path string) ecosystem.Project {
-	file := filepath.Join(path, PomXml)
-	return ecosystem.NewProject(path, EcosystemName, scanPackagesFromPomXml(file))
-}
-
-func scanPackagesFromPomXml(file string) ecosystem.Packages {
+func parsePackagesFromPomXmlContent(content string) ecosystem.Packages {
 	pkgs := ecosystem.Packages{}
-
-	xmlFile, err := os.Open(file)
-	if err != nil {
-		log.Println(err)
-		return pkgs
-	}
-
-	defer func(xmlFile *os.File) {
-		err := xmlFile.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(xmlFile)
-
-	byteValue, err := io.ReadAll(xmlFile)
-	if err != nil {
-		log.Println(err)
-		return pkgs
-	}
-
 	var project pomXml
-	err = xml.Unmarshal(byteValue, &project)
+	err := xml.Unmarshal([]byte(content), &project)
 	if err != nil {
 		log.Println(err)
 		return pkgs

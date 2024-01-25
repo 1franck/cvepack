@@ -2,17 +2,9 @@ package scan
 
 import (
 	"cvepack/core/ecosystem"
-	"cvepack/core/ecosystem/cratesio"
-	"cvepack/core/ecosystem/golang"
-	"cvepack/core/ecosystem/maven"
-	"cvepack/core/ecosystem/npm"
-	"cvepack/core/ecosystem/nuget"
-	"cvepack/core/ecosystem/packagist"
-	"cvepack/core/ecosystem/pypi"
-	"cvepack/core/ecosystem/rubygems"
+	"cvepack/core/scan/files"
 	"cvepack/core/scan/github"
 	"fmt"
-	"sync"
 )
 
 func Inspect(source ecosystem.Source) *ScannerResult {
@@ -27,88 +19,30 @@ func newScanner() *scanner {
 	return &scanner{}
 }
 
+// Scan scans a source for projects
+// support url and path sources
 func (s *scanner) Scan(source ecosystem.Source) *ScannerResult {
 	scanResult := NewScannerResult(source)
 	defer scanResult.End()
-	switch source.Type() {
 
+	switch source.Type() {
 	case ecosystem.UrlSource:
 		scanResult.Projects = s.scanUrl(source)
 	case ecosystem.PathSource:
-		scanResult.Projects = s.scanPath(source)
+		fileProvider := files.NewProvider(source)
+		scanResult.Projects = ProviderScanner(fileProvider)
 	}
 
 	return scanResult
 }
 
-// scanPath scans a path for projects
-// this is a builders based approach
-// each builder is responsible for detecting and building a ecosystem project builder
-func (s *scanner) scanPath(source ecosystem.Source) []ecosystem.Project {
-	path := source.Value
-	waitGroup := sync.WaitGroup{}
-	projects := make([]ecosystem.Project, 0)
-	builders := make([]ecosystem.ProjectBuilder, 0)
-
-	npmProjectBuilder := npm.ProjectBuilder(path)
-	if npmProjectBuilder != nil {
-		builders = append(builders, *npmProjectBuilder)
-	}
-
-	golangProjectBuilder := golang.ProjectBuilder(path)
-	if golangProjectBuilder != nil {
-		builders = append(builders, *golangProjectBuilder)
-	}
-
-	packagistProjectBuilder := packagist.ProjectBuilder(path)
-	if packagistProjectBuilder != nil {
-		builders = append(builders, *packagistProjectBuilder)
-	}
-
-	cratesioBuilder := cratesio.ProjectBuilder(path)
-	if cratesioBuilder != nil {
-		builders = append(builders, *cratesioBuilder)
-	}
-
-	rubygemsBuilder := rubygems.ProjectBuilder(path)
-	if rubygemsBuilder != nil {
-		builders = append(builders, *rubygemsBuilder)
-	}
-
-	pypiBuilder := pypi.ProjectBuilder(path)
-	if pypiBuilder != nil {
-		builders = append(builders, *pypiBuilder)
-	}
-
-	nugetBuilder := nuget.ProjectBuilder(path)
-	if nugetBuilder != nil {
-		builders = append(builders, *nugetBuilder)
-	}
-
-	mavenBuilder := maven.ProjectBuilder(path)
-	if mavenBuilder != nil {
-		builders = append(builders, *mavenBuilder)
-	}
-
-	for _, builder := range builders {
-		waitGroup.Add(1)
-		b := builder
-		go func() {
-			projects = append(projects, b.Build(path))
-			waitGroup.Done()
-		}()
-	}
-
-	waitGroup.Wait()
-	return projects
-}
-
+// scanUrl scan url for projects
 func (s *scanner) scanUrl(source ecosystem.Source) []ecosystem.Project {
-	fmt.Printf("Scanning url %s", source.Value)
+	fmt.Printf("Url %s\n", source.Value)
 	projects := make([]ecosystem.Project, 0)
-	if github.DetectGithubRepoUrl(source.Value) {
-		fmt.Printf("Detected GitHub repo")
-		return projects
+	if github.DetectGithubRepoUrl(source) {
+		provider := github.NewProvider(source)
+		return ProviderScanner(provider)
 	}
 	return projects
 }

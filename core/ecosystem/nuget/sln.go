@@ -7,23 +7,13 @@ import (
 	"io"
 	"log"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 )
 
-var slnCsprojRegex = regexp.MustCompile(`"([^"]+\.csproj)"`)
-
-func NewProjectFromSln(path string, slnFile string) ecosystem.Project {
-	file := filepath.Join(path, slnFile)
-
-	pkgs := ecosystem.Packages{}
-	for _, csproj := range scanCsprojFromSln(file) {
-		pkgs.Append(scanPackagesFromCsProjXml(filepath.Join(path, csproj))...)
-	}
-
-	return ecosystem.NewProject(path, EcosystemName, pkgs)
-}
+var (
+	slnCsprojRegex = regexp.MustCompile(`"([^"]+\.csproj)"`)
+)
 
 func scanCsprojFromSln(file string) []string {
 	content, err := common.ReadAllFile(file)
@@ -32,7 +22,7 @@ func scanCsprojFromSln(file string) []string {
 		return []string{}
 	}
 
-	lineEnding := common.DetectLineEnding(file)
+	lineEnding := common.DetectFileLineEnding(file)
 	lines := strings.Split(string(content), lineEnding)
 	var csprojPaths []string
 

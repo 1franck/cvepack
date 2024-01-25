@@ -86,7 +86,7 @@ func ReadAllFile(filePath string) ([]byte, error) {
 	return data, nil
 }
 
-func DetectLineEnding(filePath string) string {
+func DetectFileLineEnding(filePath string) string {
 	content, err := ReadAllFile(filePath)
 	if err != nil {
 		return "\n"

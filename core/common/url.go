@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 func DownloadUrlContent(url string) ([]byte, error) {
@@ -28,4 +29,30 @@ func DownloadUrlContent(url string) ([]byte, error) {
 	}
 
 	return content, nil
+}
+
+func UrlExists(url string, timeLimit int) bool {
+	if timeLimit <= 0 {
+		timeLimit = 5
+	}
+	client := http.Client{
+		Timeout: time.Duration(timeLimit) * time.Second,
+	}
+	response, err := client.Head(url)
+	if err != nil {
+		return false
+	}
+	if response.StatusCode != http.StatusOK {
+		return false
+	}
+	return true
+}
+
+func FirstUrlExists(urls []string, timeLimit int) string {
+	for _, url := range urls {
+		if UrlExists(url, timeLimit) {
+			return url
+		}
+	}
+	return ""
 }

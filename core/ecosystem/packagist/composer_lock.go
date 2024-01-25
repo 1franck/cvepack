@@ -1,9 +1,7 @@
 package packagist
 
 import (
-	"cvepack/core/ecosystem"
-	"log"
-	"path/filepath"
+	es "cvepack/core/ecosystem"
 )
 
 type composerLockFile struct {
@@ -16,21 +14,13 @@ type composerLockPackage struct {
 	Version string `json:"version"`
 }
 
-func NewProjectFromComposerLock(path string) ecosystem.Project {
-	pkgs := ecosystem.Packages{}
-	file := filepath.Join(path, ComposerLockFile)
-	composerLock, err := readComposerLockFile(file)
-
-	if err == nil {
-		for _, pkg := range composerLock.Packages {
-			pkgs = append(pkgs, ecosystem.NewDefaultPackage(pkg.Name, pkg.Version, ""))
-		}
-		for _, pkg := range composerLock.PackagesDev {
-			pkgs = append(pkgs, ecosystem.NewDefaultPackage(pkg.Name, pkg.Version, ""))
-		}
-	} else {
-		log.Printf("Error while loadding file %s : %s", file, err)
+func parsePackagesFromComposerLockFile(composerLock composerLockFile) es.Packages {
+	pkgs := es.Packages{}
+	for _, pkg := range composerLock.Packages {
+		pkgs = append(pkgs, es.NewDefaultPackage(pkg.Name, pkg.Version, ""))
 	}
-
-	return ecosystem.NewProject(path, EcosystemName, pkgs)
+	for _, pkg := range composerLock.PackagesDev {
+		pkgs = append(pkgs, es.NewDefaultPackage(pkg.Name, pkg.Version, ""))
+	}
+	return pkgs
 }

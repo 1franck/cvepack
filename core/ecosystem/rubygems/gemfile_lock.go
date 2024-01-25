@@ -4,8 +4,6 @@ import (
 	"cvepack/core/common"
 	"cvepack/core/ecosystem"
 	"fmt"
-	"log"
-	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -17,16 +15,22 @@ type gemFilePackage struct {
 	Version string
 }
 
-func NewProjectFromGemFileLock(path string) ecosystem.Project {
-	pkgs := ecosystem.Packages{}
-	file := filepath.Join(path, GemFileLock)
-	gemLockContent, err := common.ReadAllFile(file)
-	if err != nil {
-		log.Println(err)
-		return ecosystem.NewProject(path, EcosystemName, pkgs)
-	}
+func parsePackageString(text string) (gemFilePackage, error) {
+	match := packageRegex.FindStringSubmatch(text)
 
-	lines := strings.Split(string(gemLockContent), common.DetectLineEnding(file))
+	if match != nil {
+		return gemFilePackage{
+			Name:    match[1],
+			Version: match[2],
+		}, nil
+	}
+	return gemFilePackage{}, fmt.Errorf("no match found")
+}
+
+func parsePackagesGemFileLockContent(content string) ecosystem.Packages {
+	pkgs := ecosystem.Packages{}
+	lineEnding := common.DetectStringLineEnding(content)
+	lines := strings.Split(content, lineEnding)
 	specsSection := false
 
 	for _, line := range lines {
@@ -50,17 +54,5 @@ func NewProjectFromGemFileLock(path string) ecosystem.Project {
 		}
 	}
 
-	return ecosystem.NewProject(path, EcosystemName, pkgs)
-}
-
-func parsePackageString(text string) (gemFilePackage, error) {
-	match := packageRegex.FindStringSubmatch(text)
-
-	if match != nil {
-		return gemFilePackage{
-			Name:    match[1],
-			Version: match[2],
-		}, nil
-	}
-	return gemFilePackage{}, fmt.Errorf("no match found")
+	return pkgs
 }

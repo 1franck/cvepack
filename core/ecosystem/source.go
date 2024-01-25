@@ -1,5 +1,12 @@
 package ecosystem
 
+import (
+	"cvepack/core/common"
+	"errors"
+	"fmt"
+	"strings"
+)
+
 type SourceType string
 
 const (
@@ -17,7 +24,15 @@ func NewSource(value string, sourceType SourceType) Source {
 	return Source{Value: value, _type: sourceType}
 }
 
-func (s *Source) Type() SourceType {
+func NewPathSource(value string) Source {
+	return NewSource(value, PathSource)
+}
+
+func NewUrlSource(value string) Source {
+	return NewSource(value, UrlSource)
+}
+
+func (s Source) Type() SourceType {
 	return s._type
 }
 
@@ -30,4 +45,24 @@ func StringToSourceType(t string) SourceType {
 	default:
 		return UnknownSource
 	}
+}
+
+func ValidateSource(source Source) error {
+	if strings.TrimSpace(source.Value) == "" {
+		return errors.New("source is empty")
+	}
+	if source.Type() == UnknownSource {
+		return errors.New(fmt.Sprintf("unknown source: %s", source.Value))
+	}
+
+	if source.Type() == PathSource {
+		if err := common.ValidateDirectory(source.Value); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ErrorUnknownSourceType(source Source) error {
+	return errors.New(fmt.Sprintf("unknown source for %s", source.Value))
 }
