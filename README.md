@@ -17,13 +17,21 @@ It uses a [compiled](https://github.com/1franck/cvepack-database) version of [Gi
 
 ## Usage
 
-#### Scan folder(s)
+#### Scan path(s)
 
 ```bash
-cvepack scan [-d|--details] <folder path> [<folder path> ...]
+cvepack scan [-d|--details] <path1> [<path2> ...]
 ```
 
 ![scan_cmd.png](./screenshots/scan_cmd.png)
+
+#### Scan github url(s) with -u/--url
+
+```bash
+cvepack scan -u [-d|--details] <url1> [<url2> ...]
+
+ex: $ cvepack scan -u github.com/1franck/cvepack
+```
 
 #### Search a package
 
