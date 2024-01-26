@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_NewProjectFromProvider(t *testing.T) {
+func Test_Maven_NewProjectFromProvider(t *testing.T) {
 	provider := files.NewProviderFromPath("./testdata")
 	project, err := NewProjectFromProvider(provider)
 

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_NewProjectFromProvider(t *testing.T) {
+func Test_PyPi_NewProjectFromProvider(t *testing.T) {
 	provider := files.NewProvider(es.NewSource("./testdata", es.PathSource))
 	project, err := NewProjectFromProvider(provider)
 

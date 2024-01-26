@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_NewProjectFromProvider(t *testing.T) {
+func Test_Packagist_NewProjectFromProvider(t *testing.T) {
 	provider := files.NewProvider(es.NewPathSource("./testdata"))
 	project, err := NewProjectFromProvider(provider)
 
