@@ -3,6 +3,7 @@
 - Add flag -u/--url to scan subcommand
 - Add flag -s/--silent to scan subcommand
 - Add github repository support for scan subcommand
+- Support npm yarn.lock files
 
 # 0.4.0
 

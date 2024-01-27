@@ -28,7 +28,14 @@ func NewProjectFromProvider(provider es.Provider) (es.Project, error) {
 		}
 
 		// otherwise, check for yarn.lock
-		// TODO support yarn.lock
+		yarnLockPath := provider.GetFirstExistingPath(YarnLockFile)
+		if yarnLockPath != "" {
+			content, err := es.ProviderPathContent(provider, yarnLockPath)
+			if err != nil {
+				return nil, err
+			}
+			return es.NewProject(yarnLockPath, EcosystemName, parsePackagesFromYarnLockContent(content)), nil
+		}
 
 		// otherwise, use package.json
 		// TODO support package.json
