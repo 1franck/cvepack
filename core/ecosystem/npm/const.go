@@ -6,5 +6,6 @@ const (
 	PackageFile       = "package.json"
 	PackageLockFile   = "package-lock.json"
 	YarnLockFile      = "yarn.lock"
+	PnpmLockFile      = "pnpm-lock.yaml"
 	NodeModulesFolder = "node_modules"
 )

@@ -37,7 +37,17 @@ func NewProjectFromProvider(provider es.Provider) (es.Project, error) {
 			return es.NewProject(yarnLockPath, EcosystemName, parsePackagesFromYarnLockContent(content)), nil
 		}
 
-		// otherwise, use package.json
+		// otherwise, check form pnpm-lock.yaml
+		pnpmLockPath := provider.GetFirstExistingPath(PnpmLockFile)
+		if pnpmLockPath != "" {
+			content, err := es.ProviderPathContent(provider, pnpmLockPath)
+			if err != nil {
+				return nil, err
+			}
+			return es.NewProject(pnpmLockPath, EcosystemName, parsePackagesFromPnpmLockContent(content)), nil
+		}
+
+		// otherwise, fallback package.json
 		// TODO support package.json
 	}
 
