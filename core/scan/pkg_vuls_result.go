@@ -9,8 +9,8 @@ import (
 type PackagesVulnerabilitiesResult []*PackageVulnerabilitiesResult
 
 type PackageVulnerabilitiesResult struct {
-	Query           search.PackageVulnerabilityQuery `json:"Package"`
-	Vulnerabilities search.PackageVulnerabilities    `json:"Vulnerabilities"`
+	Query           search.PackageVulnerabilityQuery `json:"package"`
+	Vulnerabilities search.PackageVulnerabilities    `json:"vulnerabilities"`
 }
 
 func (result *PackagesVulnerabilitiesResult) LongestPackageName() int {

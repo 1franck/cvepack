@@ -8,9 +8,9 @@ var baseSqlQuery = `
 `
 
 type PackageVulnerabilityQuery struct {
-	Name    string
-	Version string
-	Parent  string
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Parent  string `json:"parent"`
 }
 
 func (q PackageVulnerabilityQuery) ToString() string {
