@@ -15,9 +15,8 @@ It uses a [compiled](https://github.com/1franck/cvepack-database) version of [Gi
 - [x] NuGet (.Net)
 - [x] Maven (Java)
 
-## Usage
-
-#### Scan path(s)
+### Scanner
+#### scan Path(s)
 
 ```bash
 cvepack scan <path1> [<path2> ...]
@@ -25,7 +24,7 @@ cvepack scan <path1> [<path2> ...]
 
 ![scan_cmd.png](./screenshots/scan_cmd.png)
 
-#### Scan github url(s) with -u/--url
+#### scan GitHub url(s) with -u/--url
 
 ```bash
 cvepack scan -u <url1> [<url2> ...]
@@ -33,7 +32,7 @@ cvepack scan -u <url1> [<url2> ...]
 ex: $ cvepack scan -u github.com/1franck/cvepack
 ```
 
-#### Scan commands flags
+#### scan commands flags
 | Flag | Description                |
 | --- |----------------------------|
 | -d, --details | Show CVE details           |
@@ -41,7 +40,7 @@ ex: $ cvepack scan -u github.com/1franck/cvepack
 | -s, --silent | Silent mode                |
 | -o, --output | Result output file         |
 
-#### Search a package
+### Search a package
 
 ```bash
 cvepack search <package name>
