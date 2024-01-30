@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -19,6 +20,7 @@ var (
 	showDetailsFlag bool
 	urlFlag         bool
 	silentFlag      bool
+	outputJsonFile  string
 )
 
 var ScanCommand = &cobra.Command{
@@ -46,6 +48,7 @@ func init() {
 	ScanCommand.Flags().BoolVarP(&showDetailsFlag, "details", "d", false, "show details")
 	ScanCommand.Flags().BoolVarP(&urlFlag, "url", "u", false, "url instead of path")
 	ScanCommand.Flags().BoolVarP(&silentFlag, "silent", "s", false, "silent")
+	ScanCommand.Flags().StringVarP(&outputJsonFile, "output", "o", "", "output json file")
 }
 
 func scanPath(path string, db *sql.DB) {
@@ -109,6 +112,18 @@ func scanPath(path string, db *sql.DB) {
 			pkgsVul.Append(pkg, vulnerabilities)
 		}
 
+		if outputJsonFile != "" {
+			jsonResult, err := pkgsVul.ToJson()
+			if err != nil {
+				_println(err)
+			} else {
+				err = os.WriteFile(outputJsonFile, jsonResult, 0644)
+				if err != nil {
+					_println(err)
+				}
+			}
+		}
+
 		packageAffectedCount := pkgsVul.UniqueResultCount()
 		if packageAffectedCount == 0 {
 			_println("no problem found")
@@ -148,7 +163,7 @@ func scanPath(path string, db *sql.DB) {
 				if showDetailsFlag {
 					for _, vul := range result.Vulnerabilities {
 						alias := vul.VulnerabilityId
-						if len(vul.AliasesParsed()) > 0 {
+						if len(vul.AliasesParsed) > 0 {
 							alias = vul.AliasesToString()
 						}
 						if len(alias) < 20 {

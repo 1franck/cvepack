@@ -3,13 +3,14 @@ package scan
 import (
 	"cvepack/core/ecosystem"
 	"cvepack/core/search"
+	"encoding/json"
 )
 
 type PackagesVulnerabilitiesResult []*PackageVulnerabilitiesResult
 
 type PackageVulnerabilitiesResult struct {
-	Query           search.PackageVulnerabilityQuery
-	Vulnerabilities search.PackageVulnerabilities
+	Query           search.PackageVulnerabilityQuery `json:"Package"`
+	Vulnerabilities search.PackageVulnerabilities    `json:"Vulnerabilities"`
 }
 
 func (result *PackagesVulnerabilitiesResult) LongestPackageName() int {
@@ -38,4 +39,8 @@ func (result *PackagesVulnerabilitiesResult) UniqueResultCount() int {
 		unique[value.Query.ToString()] = true
 	}
 	return len(unique)
+}
+
+func (result *PackagesVulnerabilitiesResult) ToJson() ([]byte, error) {
+	return json.Marshal(result)
 }

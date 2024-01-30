@@ -34,7 +34,7 @@ func (pvq packageVulnerabilityQuerier) Query(ecosystem, packageName, packageVers
 	}
 	defer rows.Close()
 
-	result, err := pvq.mapRows(rows)
+	result, err := mapRows(rows)
 	if err != nil {
 		return nil, err
 	}
@@ -47,38 +47,6 @@ func (pvq packageVulnerabilityQuerier) Query(ecosystem, packageName, packageVers
 	//})
 
 	return filteredResult, nil
-}
-
-func (pvq packageVulnerabilityQuerier) mapRows(rows *sql.Rows) (PackageVulnerabilities, error) {
-	var result PackageVulnerabilities
-	for rows.Next() {
-		vul, err := pvq.mapRow(rows)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, vul)
-	}
-	return result, nil
-}
-
-func (pvq packageVulnerabilityQuerier) mapRow(rows *sql.Rows) (*PackageVulnerability, error) {
-	var vul PackageVulnerability
-	err := rows.Scan(
-		&vul.Id,
-		&vul.VulnerabilityId,
-		&vul.PackageEcosystem,
-		&vul.PackageName,
-		&vul.VersionFixed,
-		&vul.VersionIntroduced,
-		&vul.VersionLastAffected,
-		&vul.Summary,
-		&vul.Details,
-		&vul.Aliases,
-		&vul.DatabaseSpecific)
-	if err != nil {
-		return nil, err
-	}
-	return &vul, nil
 }
 
 func (pvq packageVulnerabilityQuerier) isActive(pkg PackageVulnerability, pkgVersion string) bool {

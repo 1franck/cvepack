@@ -31,5 +31,10 @@ func mapRow(rows *sql.Rows) (*PackageVulnerability, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = vul.Parse()
+	if err != nil {
+		return nil, err
+	}
+
 	return &vul, nil
 }
