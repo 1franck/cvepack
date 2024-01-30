@@ -1,19 +1,32 @@
 # :space_invader: CVEPack
 
-CVEPack is a tool to detect automatically vulnerabilities in packages from various ecosystems. 
+CVEPack is a tool to detect vulnerabilities in packages from various ecosystems. 
 
 It uses a [compiled](https://github.com/1franck/cvepack-database) version of [GitHub Advisory Database](https://github.com/github/advisory-database) as source for detecting CVEs.
 
-#### Ecosystems supported
+#### Ecosystems supported with their package managers and lock files
 
 - [x] NPM (Node.js)
+  - package-lock.json
+  - yarn.lock
+  - pnpm-lock.yaml
+  - /node_modules
 - [x] Go
+  - go.sum    
 - [x] Packagist (PHP)
+  - composer.lock 
 - [x] Crates.io (Rust)
+  - Cargo.lock
 - [x] RubyGems (Ruby)
+  - Gemfile.lock
 - [x] PyPI (Python)
+  - poetry.lock
+  - pdm.lock
 - [x] NuGet (.Net)
+  - .sln
+  - .csproj
 - [x] Maven (Java)
+  - pom.xml
 
 ### Scanner
 #### scan Path(s)
