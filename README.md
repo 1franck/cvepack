@@ -20,7 +20,7 @@ It uses a [compiled](https://github.com/1franck/cvepack-database) version of [Gi
 #### Scan path(s)
 
 ```bash
-cvepack scan [-d|--details] <path1> [<path2> ...]
+cvepack scan <path1> [<path2> ...]
 ```
 
 ![scan_cmd.png](./screenshots/scan_cmd.png)
@@ -28,10 +28,18 @@ cvepack scan [-d|--details] <path1> [<path2> ...]
 #### Scan github url(s) with -u/--url
 
 ```bash
-cvepack scan -u [-d|--details] <url1> [<url2> ...]
+cvepack scan -u <url1> [<url2> ...]
 
 ex: $ cvepack scan -u github.com/1franck/cvepack
 ```
+
+#### Scan commands flags
+| Flag | Description                |
+| --- |----------------------------|
+| -d, --details | Show CVE details           |
+| -u, --url | Scan GitHub repository url |
+| -s, --silent | Silent mode                |
+| -o, --output | Result output file         |
 
 #### Search a package
 
