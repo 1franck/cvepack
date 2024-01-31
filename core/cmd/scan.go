@@ -17,10 +17,10 @@ import (
 )
 
 var (
-	showDetailsFlag bool
-	urlFlag         bool
-	silentFlag      bool
-	outputJsonFile  string
+	showDetailsFlag    bool
+	urlFlag            bool
+	silentFlag         bool
+	outputJsonFileFlag string
 )
 
 var ScanCommand = &cobra.Command{
@@ -38,8 +38,21 @@ var ScanCommand = &cobra.Command{
 		db, closeDb := database.ConnectToDefault()
 		defer closeDb(db)
 
+		projectsResult := make(scan.ProjectsVulnerabilitiesResult, 0)
 		for _, path := range args {
-			scanPath(path, db)
+			scanPath(path, db, &projectsResult)
+		}
+
+		if outputJsonFileFlag != "" {
+			jsonResult, err := projectsResult.ToJson()
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				err = os.WriteFile(outputJsonFileFlag, jsonResult, 0644)
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
 		}
 	},
 }
@@ -48,14 +61,16 @@ func init() {
 	ScanCommand.Flags().BoolVarP(&showDetailsFlag, "details", "d", false, "show details")
 	ScanCommand.Flags().BoolVarP(&urlFlag, "url", "u", false, "url instead of path")
 	ScanCommand.Flags().BoolVarP(&silentFlag, "silent", "s", false, "silent")
-	ScanCommand.Flags().StringVarP(&outputJsonFile, "output", "o", "", "output json file")
+	ScanCommand.Flags().StringVarP(&outputJsonFileFlag, "output", "o", "", "output json file")
 }
 
-func scanPath(path string, db *sql.DB) {
+func scanPath(path string, db *sql.DB, projectsResult *scan.ProjectsVulnerabilitiesResult) {
+
 	var (
-		err        error
-		verbose    = true
-		sourceType = es.PathSource
+		err           error
+		verbose       = true
+		sourceType    = es.PathSource
+		pkgVulQuerier = search.PackageVulnerabilityQuerier(db)
 	)
 
 	if silentFlag {
@@ -78,9 +93,7 @@ func scanPath(path string, db *sql.DB) {
 	}
 
 	source := es.NewSource(path, sourceType)
-
-	err = es.ValidateSource(source)
-	if err != nil {
+	if err = es.ValidateSource(source); err != nil {
 		_println(err)
 		return
 	}
@@ -88,8 +101,6 @@ func scanPath(path string, db *sql.DB) {
 	_printf("Scanning %s ...\n", path)
 
 	scanResults := scan.Inspect(source)
-	projectsResult := make(scan.ProjectsVulnerabilitiesResult, 0)
-	pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
 	for _, project := range scanResults.Projects {
 		_printf(
@@ -174,18 +185,6 @@ func scanPath(path string, db *sql.DB) {
 
 		_println()
 		_printf("duration: %s\n", scanResults.Duration())
-	}
-
-	if outputJsonFile != "" {
-		jsonResult, err := projectsResult.ToJson()
-		if err != nil {
-			_println(err)
-		} else {
-			err = os.WriteFile(outputJsonFile, jsonResult, 0644)
-			if err != nil {
-				_println(err)
-			}
-		}
 	}
 }
 

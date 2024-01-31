@@ -20,7 +20,7 @@ func (r *ProjectsVulnerabilitiesResult) ToJson() ([]byte, error) {
 	return json.Marshal(r)
 }
 
-func (r *ProjectsVulnerabilitiesResult) Add(project ecosystem.Project, pkgsVulsResult *PackagesVulnerabilitiesResult) {
+func (r *ProjectsVulnerabilitiesResult) Add(project ecosystem.Project, pkgsVulResult *PackagesVulnerabilitiesResult) {
 	sourceAbs, err := filepath.Abs(project.Source())
 	if err != nil {
 		sourceAbs = project.Source()
@@ -29,6 +29,6 @@ func (r *ProjectsVulnerabilitiesResult) Add(project ecosystem.Project, pkgsVulsR
 		Source:     sourceAbs,
 		Ecosystem:  project.Ecosystem(),
 		Date:       time.Now(),
-		ScanResult: *pkgsVulsResult,
+		ScanResult: *pkgsVulResult,
 	})
 }
