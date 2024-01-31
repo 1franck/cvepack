@@ -88,7 +88,7 @@ func scanPath(path string, db *sql.DB) {
 	_printf("Scanning %s ...\n", path)
 
 	scanResults := scan.Inspect(source)
-
+	projectsResult := make(scan.ProjectsVulnerabilitiesResult, 0)
 	pkgVulQuerier := search.PackageVulnerabilityQuerier(db)
 
 	for _, project := range scanResults.Projects {
@@ -112,17 +112,7 @@ func scanPath(path string, db *sql.DB) {
 			pkgsVul.Append(pkg, vulnerabilities)
 		}
 
-		if outputJsonFile != "" {
-			jsonResult, err := pkgsVul.ToJson()
-			if err != nil {
-				_println(err)
-			} else {
-				err = os.WriteFile(outputJsonFile, jsonResult, 0644)
-				if err != nil {
-					_println(err)
-				}
-			}
-		}
+		projectsResult.Add(project, &pkgsVul)
 
 		packageAffectedCount := pkgsVul.UniqueResultCount()
 		if packageAffectedCount == 0 {
@@ -184,6 +174,18 @@ func scanPath(path string, db *sql.DB) {
 
 		_println()
 		_printf("duration: %s\n", scanResults.Duration())
+	}
+
+	if outputJsonFile != "" {
+		jsonResult, err := projectsResult.ToJson()
+		if err != nil {
+			_println(err)
+		} else {
+			err = os.WriteFile(outputJsonFile, jsonResult, 0644)
+			if err != nil {
+				_println(err)
+			}
+		}
 	}
 }
 
