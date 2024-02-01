@@ -25,8 +25,8 @@ var (
 
 var ScanCommand = &cobra.Command{
 	Use:   "scan",
-	Short: "Scan a folder",
-	Long:  "Scan a folder",
+	Short: "Scan path(s) for vulnerabilities",
+	Long:  "Scan path(s) for vulnerabilities",
 	Run: func(cmd *cobra.Command, args []string) {
 		if !silentFlag {
 			fmt.Println(config.Default.NameAndVersion())
@@ -81,16 +81,8 @@ func scanPath(path string, db *sql.DB, projectsResult *scan.ProjectsVulnerabilit
 		sourceType = es.UrlSource
 	}
 
-	_printf := func(format string, a ...interface{}) {
-		if verbose {
-			fmt.Printf(format, a...)
-		}
-	}
-	_println := func(a ...interface{}) {
-		if verbose {
-			fmt.Println(a...)
-		}
-	}
+	_printf := printfBuilder(verbose)
+	_println := printlnBuilder(verbose)
 
 	source := es.NewSource(path, sourceType)
 	if err = es.ValidateSource(source); err != nil {
