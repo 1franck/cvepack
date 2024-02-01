@@ -11,8 +11,8 @@ import (
 
 var SearchCmd = &cobra.Command{
 	Use:   "search",
-	Short: "Search a package in database",
-	Long:  "Search a package in database",
+	Short: "Search a package by name",
+	Long:  "Search a package by name",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("%s v%s\n", config.Default.Name, config.Default.Version)
 
