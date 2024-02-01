@@ -4,7 +4,7 @@ CVEPack is a tool to detect vulnerabilities in packages from various ecosystems.
 
 It uses a [compiled](https://github.com/1franck/cvepack-database) version of [GitHub Advisory Database](https://github.com/github/advisory-database) as source for detecting CVEs.
 
-#### Ecosystems detected with their package managers and lock files
+#### Ecosystems detected with their package managers and lock files:
 
 - [x] NPM (Node.js)
   - package-lock.json
@@ -61,8 +61,14 @@ cvepack search <package name>
 
 ![search_cmd.png](./screenshots/search_cmd.png)
 
-#### Update CVE database
+#### Update CVE [database](https://github.com/1franck/cvepack-database)
 
 ```bash
 cvepack update
+```
+
+### Build from source
+
+```bash
+make
 ```
