@@ -4,7 +4,6 @@ import (
 	"cvepack/core/sqlite"
 	"errors"
 	"os"
-	"time"
 )
 
 func IsDatabaseOk(dbPath string) error {
@@ -29,6 +28,5 @@ func LastModified(dbPath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	modTime := fileInfo.ModTime()
-	return modTime.Format(time.RFC1123), nil
+	return fileInfo.ModTime().Format("2006-01-02 15:04:05"), nil
 }

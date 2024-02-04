@@ -2,51 +2,61 @@ package cmd
 
 import (
 	"cvepack/core/cli"
+	"cvepack/core/common"
 	"cvepack/core/config"
 	"cvepack/core/database"
 	"cvepack/core/stats"
 	"fmt"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 	"log"
 )
 
 var StatsCmd = &cobra.Command{
 	Use:   "stats",
-	Short: "Vulnerabilities database stats",
-	Long:  "Vulnerabilities database stats",
+	Short: "Packages vulnerabilities stats",
+	Long:  "Packages vulnerabilities stats",
 	Run: func(cmd *cobra.Command, args []string) {
-		cli.PrintNameWithVersionHeader()
 
 		db, closeDb := database.ConnectToDefault()
 		defer closeDb(db)
 
+		cli.PrintNameWithVersionHeader()
+
 		total := stats.GetTotalVulnerabilities(db)
-		cli.PrintWithUnderline(fmt.Sprintf("Total vulnerabilities: %d", total))
+		fmt.Printf("Total vulnerabilities: %d\n", total)
+
+		lastModified, err := database.LastModified(config.Default.DatabaseFilePath())
+		if err != nil {
+			log.Fatalf("error while getting database last modified time: %s", err)
+		}
+		fmt.Printf("Last update: %s\n", lastModified)
 
 		ecosystemStats, err := stats.GetEcosystemsStats(db)
 		if err != nil {
 			log.Fatalf("error while getting ecosystem stats: %s", err)
 		}
 
-		ecosystemStatsFormatted := make(map[string]string, len(ecosystemStats))
-		for ecosystem, count := range ecosystemStats {
-			language := stats.Ecosystems[ecosystem]
-			if language != ecosystem {
-				language = fmt.Sprintf("%s (%s)", ecosystem, language)
-			}
-			ecosystemStatsFormatted[language] = fmt.Sprintf("%d", count)
+		rows := make([][]string, 0)
 
-			percentageRounded := fmt.Sprintf("%.1f", float64(count)/float64(total)*100)
-			ecosystemStatsFormatted[language] = ecosystemStatsFormatted[language] + " (" + percentageRounded + "%)"
+		for _, es := range ecosystemStats {
+			rows = append(rows, []string{
+				common.DefaultTextPad(es.GetTitle()),
+				common.DefaultTextPad(fmt.Sprintf("%5d", es.Count)),
+				common.DefaultTextPad(fmt.Sprintf("%5.2f %s", es.Percentage(total), "%")),
+			})
 		}
 
-		cli.PrintMap(ecosystemStatsFormatted, nil)
+		t := table.New().
+			Border(lipgloss.NormalBorder()).
+			BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))).
+			Headers(
+				common.DefaultTextPad("Ecosystem"),
+				common.DefaultTextPad("Count"),
+				common.DefaultTextPad("DB ratio")).
+			Rows(rows...)
 
-		lastModified, err := database.LastModified(config.Default.DatabaseFilePath())
-		if err != nil {
-			log.Fatalf("error while getting database last modified time: %s", err)
-		}
-
-		cli.PrintWithUpperLine(fmt.Sprintf("Last update: %s", lastModified))
+		fmt.Println(t.Render())
 	},
 }

@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	//startedAt := time.Now()
 	cmd.RootCmd.AddCommand(cmd.VersionCmd)
 	cmd.RootCmd.AddCommand(cmd.UpdateCmd)
 	cmd.RootCmd.AddCommand(cmd.ScanCommand)
@@ -18,4 +19,5 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	//fmt.Printf("Finished in %s\n", time.Since(startedAt))
 }

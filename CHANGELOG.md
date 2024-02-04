@@ -6,6 +6,7 @@
 - Add GitHub repository url support for scan subcommand
 - Support npm yarn.lock files
 - Support npm pnpm-lock.yaml files
+- Revamps stats subcommand
 
 # 0.4.0
 

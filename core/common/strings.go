@@ -1,6 +1,9 @@
 package common
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func ReplacePlaceholders(template string, replacements map[string]string) string {
 	for placeholder, value := range replacements {
@@ -23,4 +26,13 @@ func DetectStringLineEnding(content string) string {
 	}
 
 	return "\n"
+}
+
+func TextPad(text string, padding int) string {
+	pad := strings.Repeat(" ", padding)
+	return fmt.Sprintf("%s%s%s", pad, text, pad)
+}
+
+func DefaultTextPad(text string) string {
+	return TextPad(text, 1)
 }
